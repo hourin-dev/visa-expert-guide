@@ -1,6 +1,6 @@
-// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (배점표 기준 통합 출력)
+// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (최종 안정화 버전)
 
-const GNI_2025_ESTIMATE = 42200000;
+const GNI_2025_ESTIMATE = 42200000; // 2024년 GNI (4,220만원) 기준 가정
 const GNI_MANWON = (GNI_2025_ESTIMATE / 10000).toFixed(0);
 
 function getScoreRange(value, tiers) {
@@ -31,7 +31,7 @@ function generateDocumentList() {
 }
 
 function generateScoreTable() {
-    // 배점표 기준을 HTML로 생성
+    // 배점표 기준을 HTML로 생성 (이전과 동일)
     return `
         <style>
             .base-score-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
@@ -104,12 +104,31 @@ function generateScoreTable() {
     `;
 }
 
+// -------------------------------------------------------------
+// *새로 추가된 함수* - 입력 내용 초기화 함수
+// -------------------------------------------------------------
+function resetE74Form() {
+    // 폼 전체를 초기화합니다.
+    document.getElementById('e74Form').reset();
+    
+    // 결과 출력 영역도 비우고 숨깁니다.
+    document.getElementById('e74Result').innerHTML = '';
+    document.getElementById('e74DocumentGuidance').innerHTML = '';
+    document.getElementById('e74DocumentGuidance').style.display = 'none';
+    document.getElementById('e74CloseButtonArea').style.display = 'none';
+    document.getElementById('e74ScoreTableArea').innerHTML = ''; 
+    document.getElementById('e74ScoreTableArea').style.display = 'none';
+    
+    alert('모든 입력 내용이 초기화되었습니다.');
+}
+// -------------------------------------------------------------
+
 function calculateE74() {
     // 🚨 계산 시작 시 기존 결과 영역 및 배점표 영역을 숨깁니다.
     document.getElementById('e74Result').innerHTML = '';
     document.getElementById('e74DocumentGuidance').style.display = 'none';
     document.getElementById('e74CloseButtonArea').style.display = 'none';
-    document.getElementById('e74ScoreTableArea').style.display = 'none'; // 배점표 숨김
+    document.getElementById('e74ScoreTableArea').style.display = 'none'; 
 
     // 1. 입력 값 가져오기
     const income = parseInt(document.getElementById('e74_income').value) || 0;
@@ -160,13 +179,15 @@ function calculateE74() {
 
     // 국내 경력 점수
     careerScore = Math.min(50, Math.floor(career / 12) * 10);
-
+    
     // --- II. 가점 및 III. 감점 계산 ---
     bonusScore = (techCheck ? 10 : 0) + (degreeCheck ? 10 : 0) + (assetCheck ? 5 : 0) + (localCheck ? 10 : 0) + (kiipCompCheck ? 10 : 0) + (serviceCheck ? 5 : 0);
     penaltyScore = (violationCount >= 3) ? -50 : (violationCount === 2) ? -10 : (violationCount === 1) ? -5 : 0;
+    
+    // 🚨 핵심 수정: 총점 계산 로직을 명확하게 합산
     totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
     
-    // --- IV. 필수 요건 최종 확인 (중략) ---
+    // --- IV. 필수 요건 최종 확인 ---
     if (incomeScore < REQUIRED_INCOME_MIN_POINT || koreanScore < REQUIRED_KOREAN_MIN_POINT || violationCount >= 3) {
         requiredConditionMet = false;
         // requiredMessage 설정 (생략)
@@ -206,21 +227,4 @@ function calculateE74() {
             <li>- 가점 합계: <strong style="color: green;">+${bonusScore}점</strong></li>
             <li>- 감점 합계: <strong style="color: red;">${penaltyScore}점</strong></li>
         </ul>
-        <p class="note">※ 본 진단은 참고용입니다.</p>
-    `;
-
-    // 5. 배점표 기준 출력 (추가된 기능)
-    scoreTableArea.innerHTML = generateScoreTable();
-    scoreTableArea.style.display = 'block'; // 배점표 영역 활성화
-    
-    // 6. 서류 안내 및 닫기 버튼 제어
-    if (isPass) {
-        docBox.innerHTML = generateDocumentList();
-        docBox.style.display = 'block';
-        closeArea.style.display = 'block'; // 닫기 버튼 영역 활성화
-    } else {
-        docBox.innerHTML = '';
-        docBox.style.display = 'none';
-        closeArea.style.display = 'none'; // 닫기 버튼 영역 비활성화
-    }
-}
+        <p
