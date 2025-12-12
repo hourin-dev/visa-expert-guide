@@ -59,56 +59,63 @@
     </main>
 
 <div id="e74Modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
-            <h2>🎯 E-7-4 숙련기능인력 점수 진단</h2>
-            <form id="e74Form">
-                
-                <h3>I. 필수 기본 항목 및 점수 (최대 200점)</h3>
-                
-                <label for="e74_income">① 연간 소득 (세전, 원):</label>
-                <input type="number" id="e74_income" placeholder="GNI 이상 입력 (필수)" required>
-                
-                <label for="e74_korean">② 한국어 능력 (KIIP/TOPIK):</label>
-                <select id="e74_korean">
-                    <option value="0">선택 안함/미해당</option>
-                    <option value="50">KIIP 5단계 이수 또는 TOPIK 5급 이상 (50점)</option>
-                    <option value="40">KIIP 4단계 이수 또는 TOPIK 4급 (40점)</option>
-                    <option value="30">KIIP 3단계 이수 또는 TOPIK 3급 (30점)</option>
-                    <option value="20">KIIP 2단계 이수 또는 TOPIK 2급 (20점)</option>
-                </select>
-                
-                <label for="e74_age">③ 만 나이:</label>
-                <input type="number" id="e74_age" placeholder="만 나이 입력 (필수)" required>
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
+        <h2>🎯 E-7-4 숙련기능인력 점수 진단</h2>
+        <form id="e74Form">
+            
+            <h3>I. 필수 기본 항목 및 점수 (최대 200점)</h3>
+            
+            <label for="e74_income">① 연간 소득 (세전, 원):</label>
+            <input type="number" id="e74_income" placeholder="GNI 이상 입력 (필수)" required>
+            
+            <label for="e74_korean">② 한국어 능력 (KIIP/TOPIK):</label>
+            <select id="e74_korean">
+                <option value="0">선택 안함/미해당</option>
+                <option value="50">KIIP 5단계 이수 또는 TOPIK 5급 이상 (50점)</option>
+                <option value="40">KIIP 4단계 이수 또는 TOPIK 4급 (40점)</option>
+                <option value="30">KIIP 3단계 이수 또는 TOPIK 3급 (30점)</option>
+                <option value="20">KIIP 2단계 이수 또는 TOPIK 2급 (20점)</option>
+            </select>
+            
+            <label for="e74_age">③ 만 나이:</label>
+            <input type="number" id="e74_age" placeholder="만 나이 입력 (필수)" required>
 
-                <label for="e74_career">④ 국내 경력 (E-9, E-10, H-2 자격, 개월):</label>
-                <input type="number" id="e74_career" placeholder="총 경력 기간 (개월)" required>
+            <label for="e74_career">④ 국내 경력 (E-9, E-10, H-2 자격, 개월):</label>
+            <input type="number" id="e74_career" placeholder="총 경력 기간 (개월)" required>
 
-                <h3>II. 가점 항목 (최대 90점)</h3>
-                <div class="checkbox-group">
-                    <p style="font-weight: bold; margin-bottom: 5px;">기술/숙련도 (최대 30점):</p>
-                    <label><input type="checkbox" id="e74_tech"> 숙련도(기술) 관련 자격증 보유 (10점)</label>
-                    <label><input type="checkbox" id="e74_degree"> 국내 전문학사 이상 학위 (10점)</label>
-                    <label><input type="checkbox" id="e74_kiipcomp"> KIIP 5단계 이수 후 3년 경과 (10점)</label>
-                </div>
-                
-                <div class="checkbox-group" style="margin-top: 15px;">
-                    <p style="font-weight: bold; margin-bottom: 5px;">고용 기업 기여도 (최대 40점):</p>
-                    <label><input type="checkbox" id="e74_asset"> 부동산 등 자산 보유 (5점)</label>
-                    <label><input type="checkbox" id="e74_local"> 지방 근무지 (10점)</label>
-                    <label><input type="checkbox" id="e74_service"> 대한민국 우수 서비스 인력 (5점)</label>
-                </div>
+            <h3>II. 가점 항목 (최대 90점)</h3>
+            <div class="checkbox-group">
+                <p style="font-weight: bold; margin-bottom: 5px;">기술/숙련도 (최대 30점):</p>
+                <label><input type="checkbox" id="e74_tech"> 숙련도(기술) 관련 자격증 보유 (10점)</label>
+                <label><input type="checkbox" id="e74_degree"> 국내 전문학사 이상 학위 (10점)</label>
+                <label><input type="checkbox" id="e74_kiipcomp"> KIIP 5단계 이수 후 3년 경과 (10점)</label>
+            </div>
+            
+            <div class="checkbox-group" style="margin-top: 15px;">
+                <p style="font-weight: bold; margin-bottom: 5px;">고용 기업 기여도 (최대 40점):</p>
+                <label><input type="checkbox" id="e74_asset"> 부동산 등 자산 보유 (5점)</label>
+                <label><input type="checkbox" id="e74_local"> 지방 근무지 (10점)</label>
+                <label><input type="checkbox" id="e74_service"> 대한민국 우수 서비스 인력 (5점)</label>
+            </div>
 
-                <h3>III. 감점 항목</h3>
-                <label for="e74_violation_count">출입국관리법 위반 횟수 (최근 3년):</label>
-                <input type="number" id="e74_income" value="0" min="0">
+            <h3>III. 감점 항목</h3>
+            <label for="e74_violation_count">출입국관리법 위반 횟수 (최근 3년):</label>
+            <input type="number" id="e74_violation_count" value="0" min="0">
 
-                <button type="button" onclick="calculateE74()">🎯 최종 점수 계산 및 진단</button>
-            </form>
-            <div id="e74Result" class="result-box"></div>
+            <button type="button" onclick="calculateE74()">🎯 최종 점수 계산 및 진단</button>
+        </form>
+        
+        <div id="e74Result" class="result-box"></div>
+        
+        <div id="e74DocumentGuidance" class="document-guidance-box" style="display: none;">
+            <button type="button" class="close-modal-btn" onclick="closeModal('e74Modal')">
+                결과 확인 완료 및 창 닫기
+            </button>
         </div>
+        
     </div>
-    
+</div>    
     <div id="h2Modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('h2Modal')">&times;</span>
