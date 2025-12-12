@@ -1,4 +1,4 @@
-// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (입력 초기화 기능 추가)
+// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (항목별 점수 상세 출력)
 
 const GNI_2025_ESTIMATE = 42200000;
 
@@ -46,9 +46,8 @@ function resetE74Form() {
 }
 // -------------------------------------------------------------
 
-
 function calculateE74() {
-    // 🚨 업데이트: 계산 시작 시 기존 결과 영역을 숨깁니다.
+    // 🚨 계산 시작 시 기존 결과 영역을 숨깁니다.
     document.getElementById('e74Result').innerHTML = '';
     document.getElementById('e74DocumentGuidance').style.display = 'none';
     document.getElementById('e74CloseButtonArea').style.display = 'none';
@@ -57,10 +56,10 @@ function calculateE74() {
     const income = parseInt(document.getElementById('e74_income').value) || 0;
     const koreanScore = parseInt(document.getElementById('e74_korean').value) || 0;
     const age = parseInt(document.getElementById('e74_age').value) || 0;
-    const career = parseInt(document.getElementById('e74_career').value) || 0;
+    const career = parseInt(document.getElementById('e74_career').value) || 0; // 개월 수
     const violationCount = parseInt(document.getElementById('e74_violation_count').value) || 0;
 
-    // 가점 항목 체크박스 (이전 답변 코드와 동일)
+    // 가점 항목 체크박스
     const techCheck = document.getElementById('e74_tech').checked;
     const degreeCheck = document.getElementById('e74_degree').checked;
     const kiipCompCheck = document.getElementById('e74_kiipcomp').checked;
@@ -72,7 +71,7 @@ function calculateE74() {
     const docBox = document.getElementById('e74DocumentGuidance'); 
     const closeArea = document.getElementById('e74CloseButtonArea'); 
 
-    // 2. 점수 및 필수 요건 설정 (로직은 이전 답변과 동일)
+    // 2. 초기 점수 설정 및 필수 요건 확인
     let totalScore = 0;
     let incomeScore = 0;
     let ageScore = 0;
@@ -86,25 +85,55 @@ function calculateE74() {
     const REQUIRED_INCOME_MIN_POINT = 10;
     const REQUIRED_KOREAN_MIN_POINT = 20;
 
-    // --- I, II, III. 점수 계산 로직 (중략) ---
-    // 소득 점수
+    // --- I. 기본 점수 계산 ---
+    // 2.1. 소득 점수 (최대 80점)
     const incomeTiers = [
-        { min: GNI_2025_ESTIMATE * 1.5, score: 80 }, { min: GNI_2025_ESTIMATE * 0.5, score: 10 }
+        { min: GNI_2025_ESTIMATE * 1.5, score: 80 }, { min: GNI_2025_ESTIMATE * 1.2, score: 70 },
+        { min: GNI_2025_ESTIMATE * 1.0, score: 60 }, { min: GNI_2025_ESTIMATE * 0.8, score: 40 },
+        { min: GNI_2025_ESTIMATE * 0.6, score: 20 }, { min: GNI_2025_ESTIMATE * 0.5, score: 10 }
     ];
     incomeScore = getScoreRange(income, incomeTiers);
-    // 나이 점수 (간략화)
-    const ageTiers = [{ min: 35, score: 20 }, { min: 25, score: 10 }];
+
+    // 2.2. 나이 점수 (최대 20점)
+    const ageTiers = [{ min: 35, score: 20 }, { min: 30, score: 15 }, { min: 25, score: 10 }, { min: 20, score: 5 }];
     ageScore = getScoreRange(age, ageTiers);
-    // 경력, 가점, 감점
+
+    // 2.3. 국내 경력 점수 (최대 50점)
     careerScore = Math.min(50, Math.floor(career / 12) * 10);
-    bonusScore = (techCheck ? 10 : 0) + (degreeCheck ? 10 : 0) + (assetCheck ? 5 : 0) + (localCheck ? 10 : 0) + (kiipCompCheck ? 10 : 0) + (serviceCheck ? 5 : 0);
-    penaltyScore = (violationCount >= 3) ? -50 : (violationCount === 2) ? -10 : (violationCount === 1) ? -5 : 0;
-    totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
+
+    // 기본 점수 합산 (총점수 계산의 중간 단계)
+    let baseScore = incomeScore + ageScore + careerScore + koreanScore;
+
+    // --- II. 가점 계산 (최대 90점) ---
+    if (techCheck) { bonusScore += 10; }
+    if (degreeCheck) { bonusScore += 10; }
+    if (kiipCompCheck) { bonusScore += 10; }
+    if (assetCheck) { bonusScore += 5; }
+    if (localCheck) { bonusScore += 10; }
+    if (serviceCheck) { bonusScore += 5; }
+
+    // --- III. 감점 계산 (최대 50점 감점) ---
+    if (violationCount >= 3) {
+        penaltyScore = -50;
+    } else if (violationCount === 2) {
+        penaltyScore = -10;
+    } else if (violationCount === 1) {
+        penaltyScore = -5;
+    }
     
-    // --- IV. 필수 요건 최종 확인 (중략) ---
-    if (incomeScore < REQUIRED_INCOME_MIN_POINT || koreanScore < REQUIRED_KOREAN_MIN_POINT || violationCount >= 3) {
+    // 최종 총점
+    totalScore = baseScore + bonusScore + penaltyScore;
+
+    // --- IV. 필수 요건 최종 확인 ---
+    if (incomeScore < REQUIRED_INCOME_MIN_POINT) {
         requiredConditionMet = false;
-        // requiredMessage 설정 (생략)
+        requiredMessage = `소득 점수(${incomeScore}점)가 필수 최소 점수(${REQUIRED_INCOME_MIN_POINT}점)에 미달합니다.`;
+    } else if (koreanScore < REQUIRED_KOREAN_MIN_POINT) {
+        requiredConditionMet = false;
+        requiredMessage = `한국어 점수(${koreanScore}점)가 필수 최소 점수(${REQUIRED_KOREAN_MIN_POINT}점)에 미달합니다.`;
+    } else if (violationCount >= 3) {
+        requiredConditionMet = false;
+        requiredMessage = '출입국관리법 위반 3회 이상으로 즉시 불허 사유입니다.';
     }
 
     // 3. 최종 진단
@@ -124,13 +153,25 @@ function calculateE74() {
         resultColor = 'orange';
     }
 
-    // 4. 결과 출력 (HTML 그대로 유지)
+    // 4. 결과 출력 (총점 및 상세 점수 포함)
     resultBox.innerHTML = `
         <h3>✨ E-7-4 최종 진단 결과</h3>
-        <p><strong>총 점수:</strong> <span style="font-size: 1.2em; color: ${resultColor};">${totalScore}점</span> (기준 ${REQUIRED_MIN_SCORE}점)</p>
+        <p><strong>총 점수:</strong> <span style="font-size: 1.5em; font-weight: 900; color: ${resultColor};">${totalScore}점</span> (기준 ${REQUIRED_MIN_SCORE}점)</p>
         <p><strong>최종 진단:</strong> <span style="font-weight: bold; color: ${resultColor};">${diagnosisStatus}</span></p>
         <hr>
-        <p class="note">※ 본 진단은 참고용이며, 최종 심사는 법무부 지침에 따릅니다.</p>
+        <h4>[항목별 상세 배정 점수]</h4>
+        <ul style="list-style-type: none; padding-left: 0;">
+            <li style="font-weight: bold; margin-bottom: 5px;">기본 점수 (최대 200점)</li>
+            <li>- ① 소득 (${(income / 10000).toFixed(0)}만원): <strong style="color: ${incomeScore > 0 ? 'blue' : 'gray'};">${incomeScore}점</strong></li>
+            <li>- ② 한국어 능력: <strong style="color: ${koreanScore > 0 ? 'blue' : 'gray'};">${koreanScore}점</strong></li>
+            <li>- ③ 나이 (만 ${age}세): <strong style="color: ${ageScore > 0 ? 'blue' : 'gray'};">${ageScore}점</strong></li>
+            <li>- ④ 국내 경력 (${(career / 12).toFixed(1)}년): <strong style="color: ${careerScore > 0 ? 'blue' : 'gray'};">${careerScore}점</strong></li>
+            <li style="font-weight: bold; margin-top: 10px;">가점/감점 (최대 90점)</li>
+            <li>- 가점 합계: <strong style="color: green;">+${bonusScore}점</strong></li>
+            <li>- 감점 합계: <strong style="color: red;">${penaltyScore}점</strong></li>
+        </ul>
+        ${requiredMessage ? `<p style="color:red; font-weight:bold;">필수 요건 미충족 사유: ${requiredMessage}</p>` : ''}
+        <p class="note">※ 본 진단은 참고용입니다. GNI 기준: 약 ${(GNI_2025_ESTIMATE / 10000).toFixed(0)}만원</p>
     `;
 
     // 5. 서류 안내 및 닫기 버튼 제어
