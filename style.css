@@ -1,0 +1,118 @@
+/* 전역 및 기본 설정 */
+:root {
+    --color-main: #1e88e5; /* 블루 */
+    --color-accent: #43a047; /* 그린 (진단) */
+    --color-highlight: #ffb300; /* 주황 (E-7-4) */
+    --color-bg: #f7f9fc;
+    --color-border: #e3f2fd;
+    --font-default: 'Noto Sans KR', Arial, sans-serif;
+}
+body {
+    font-family: var(--font-default);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg);
+    color: #333;
+}
+header {
+    background: var(--color-main);
+    color: white;
+    padding: 2.5rem 1rem; /* rem 단위로 모바일 반응 */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+h1 { margin: 0; font-size: 1.8rem; font-weight: 900; }
+.container {
+    padding: 1rem;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* 섹션 및 비자 그룹 스타일 */
+.section {
+    margin-bottom: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden; /* 내부 margin/padding 관리 */
+}
+.visa-group {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+.visa-group:last-child { margin-bottom: 0; }
+
+h2 {
+    color: var(--color-main);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+/* 메뉴 그리드 및 버튼 */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+.menu-item {
+    padding: 1.1rem 0.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.2s, transform 0.2s;
+    background-color: #f0f4f7;
+    color: #333;
+    line-height: 1.3;
+    white-space: normal; /* 텍스트 줄바꿈 허용 */
+}
+.menu-item:hover {
+    background-color: #e3f2fd;
+    transform: translateY(-2px);
+}
+
+/* 중요 기능 하이라이트 */
+.menu-item.important { background-color: var(--color-accent); color: white; font-weight: 700; }
+.menu-item.important:hover { background-color: #388e3c; }
+.menu-item.highlight { background-color: var(--color-highlight); color: #333; font-weight: 700; }
+.menu-item.highlight:hover { background-color: #ffc107; }
+.menu-item.highlight-alt { background-color: #b3e5fc; color: #01579b; }
+.menu-item.highlight-alt:hover { background-color: #81d4fa; }
+
+/* 유틸리티 섹션 (검색 버튼) */
+.utility-section { padding: 0.75rem 1rem; }
+.menu-item.full-width { 
+    width: 100%; margin-bottom: 0.5rem; 
+    background-color: #03a9f4; color: white; 
+    font-size: 1.1rem; padding: 1rem;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .container { padding: 0.5rem; }
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(45%, 1fr)); /* 2열 배치 */
+    }
+    .visa-group { padding: 0.75rem; }
+}
+@media (max-width: 480px) {
+    .menu-grid {
+        grid-template-columns: 1fr; /* 1열 배치 */
+    }
+}
+/* 모달 스타일은 이전 답변과 동일하게 유지 */
+/* ... (Modal CSS) ... */
+.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); overflow-y: auto; }
+.modal-content { background-color: #fefefe; margin: 5% auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 650px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+.close-btn { color: #aaa; float: right; font-size: 32px; font-weight: bold; line-height: 1; cursor: pointer;}
+.close-btn:hover { color: #333; }

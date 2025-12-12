@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출입국 비자 전문 컨설턴트 | Visa Expert Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🏛️ 비자 전문 컨설턴트 가이드</h1>
+        <p>현장 상담 및 모바일 최적화 시스템</p>
+    </header>
+
+    <main class="container">
+        
+        <section class="section utility-section">
+            <button class="menu-item full-width primary" onclick="alert('법규/지침 검색 Q&A 모듈 연결 예정')">
+                🔍 **법규/지침 검색 & Q&A 바로가기**
+            </button>
+            <div class="alert-banner">
+                🔔 **최신 알림:** E-7-4 점수제 갱신 사항 확인!
+            </div>
+        </section>
+
+        <section class="section visa-series-list">
+
+            <div class="visa-group f-series">
+                <h2>F계열 비자 (가족, 거주, 영주, 동포)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item important" onclick="alert('F-5 영주권 진단 모듈 연결 예정')">🎯 F-5 영주권 요건 진단</button>
+                    <button class="menu-item important" onclick="alert('F-2-7 우수 인재 점수 진단 모듈 연결 예정')">🎯 F-2-7 우수 인재 점수 진단</button>
+                    <button class="menu-item" onclick="alert('F-4 재외동포 자격 확인 모듈 연결 예정')">🛠️ F-4 재외동포 자격 확인</button>
+                    <button class="menu-item" onclick="alert('F-6 결혼이민 조건 안내 모듈 연결 예정')">📝 F-6 결혼이민 조건 가이드</button>
+                </div>
+            </div>
+
+            <div class="visa-group e-series">
+                <h2>E계열 비자 (전문직, 특정활동, 취업)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item highlight" onclick="openModal('e74Modal')">🎯 E-7-4 숙련기능인력 진단</button>
+                    <button class="menu-item" onclick="alert('E-7-1 직종별 요건 진단 모듈 연결 예정')">🛠️ E-7-1 특정활동 조건 체크</button>
+                    <button class="menu-item" onclick="alert('E-9/E-10 절차 안내 모듈 연결 예정')">📝 E-9/E-10 취업 절차 안내</button>
+                    <button class="menu-item" onclick="alert('E-2 심사 가이드 모듈 연결 예정')">🛠️ E-2 회화지도 심사 가이드</button>
+                </div>
+            </div>
+
+            <div class="visa-group h-series">
+                <h2>H계열 비자 (방문취업)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item" onclick="openModal('h2Modal')">🛠️ H-2 취업 가능성 상세 진단</button>
+                    <button class="menu-item" onclick="alert('H-1 요건 안내 모듈 연결 예정')">📝 H-1 관광취업 요건 안내</button>
+                </div>
+            </div>
+
+            <div class="visa-group d-series">
+                <h2>D계열 비자 (유학, 연수, 투자)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item" onclick="alert('D-8 투자 요건 체크 모듈 연결 예정')">🛠️ D-8 기업투자 요건 체크</button>
+                    <button class="menu-item" onclick="alert('D-2 체류 조건 모듈 연결 예정')">📝 D-2 유학 체류 조건 안내</button>
+                    <button class="menu-item" onclick="alert('D-10 조건 안내 모듈 연결 예정')">📝 D-10 구직 비자 조건 안내</button>
+                </div>
+            </div>
+            
+            <div class="visa-group a-series">
+                <h2>A계열 비자 (외교, 공무, 협정)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item disabled" onclick="alert('A계열 비자는 통상 외교부/법무부 협의를 요합니다.')">A-1/A-2/A-3 정보 참조</button>
+                </div>
+            </div>
+            
+            <div class="visa-group common-tools">
+                <h2>📌 공통 지원 기능</h2>
+                <div class="menu-grid">
+                    <button class="menu-item highlight-alt" onclick="alert('통합 서류 안내 모듈 연결 예정')">📝 체류 자격별 필수 서류 안내</button>
+                    <button class="menu-item highlight-alt" onclick="alert('변경/연장 절차 가이드 모듈 연결 예정')">📝 비자 변경/연장 절차 가이드</button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="e74Modal" class="modal">...</div>
+    <div id="h2Modal" class="modal">...</div>
+    
+    <script src="script.js"></script>
+    <script src="e74.js"></script>
+    <script src="h2.js"></script>
+</body>
+</html>
