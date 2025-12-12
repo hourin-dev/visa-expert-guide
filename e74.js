@@ -13,6 +13,7 @@ function getScoreRange(value, tiers) {
 }
 
 function generateDocumentList() {
+    // 서류 목록 생성 함수
     return `
         <h3>✅ E-7-4 비자 신청 필수 서류 (적격자용)</h3>
         <p style="font-style: italic;">* 모든 서류는 발급일로부터 3개월 이내여야 합니다.</p>
@@ -30,6 +31,7 @@ function generateDocumentList() {
 }
 
 function generateScoreTable() {
+    // 배점표 기준표 생성 함수
     return `
         <style>
             .base-score-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
@@ -103,17 +105,13 @@ function generateScoreTable() {
 }
 
 function resetE74Form() {
-    // 폼 전체를 초기화합니다.
     document.getElementById('e74Form').reset();
-    
-    // 결과 출력 영역도 비우고 숨깁니다.
     document.getElementById('e74Result').innerHTML = '';
     document.getElementById('e74DocumentGuidance').innerHTML = '';
     document.getElementById('e74DocumentGuidance').style.display = 'none';
     document.getElementById('e74CloseButtonArea').style.display = 'none';
     document.getElementById('e74ScoreTableArea').innerHTML = ''; 
     document.getElementById('e74ScoreTableArea').style.display = 'none';
-    
     alert('모든 입력 내용이 초기화되었습니다.');
 }
 
@@ -124,17 +122,19 @@ function calculateE74() {
     document.getElementById('e74CloseButtonArea').style.display = 'none';
     document.getElementById('e74ScoreTableArea').style.display = 'none'; 
 
-    // 1. 입력 요소 가져오기 (요소 존재 확인 및 안전한 값 파싱)
+    // 1. 입력 요소 가져오기 (Null 체크 강화)
     const incomeElement = document.getElementById('e74_income');
     const ageElement = document.getElementById('e74_age');
-
-    // 🚨 필수 요소 존재 확인
-    if (!incomeElement || !ageElement) {
+    const violationElement = document.getElementById('e74_violation_count');
+    
+    // 필수 요소 존재 확인
+    if (!incomeElement || !ageElement || !violationElement) {
         document.getElementById('e74Result').innerHTML = 
-            '<p style="color:red; font-weight:bold;">❌ 시스템 오류: HTML 요소를 찾을 수 없습니다. (index.html 확인 필요)</p>';
+            '<p style="color:red; font-weight:bold;">❌ 시스템 오류: HTML 필수 입력 필드(소득/나이/위반 횟수)를 찾을 수 없습니다.</p>';
         return; 
     }
-    // 필수 입력 값 검사
+    
+    // 필수 입력 값 검사 (required 속성 제거 후 JS가 검사)
     if (!incomeElement.value || !ageElement.value) {
         document.getElementById('e74Result').innerHTML = 
             '<p style="color:red; font-weight:bold;">⚠️ 필수 항목 (소득, 나이)을 입력해 주세요!</p>';
@@ -142,18 +142,13 @@ function calculateE74() {
     }
 
     // 2. 변수 선언 및 값 파싱
-    // 모든 계산 변수를 함수 스코프 내에서 명확하게 선언합니다.
     let income = parseInt(incomeElement.value) || 0;
     let koreanScore = parseInt(document.getElementById('e74_korean')?.value) || 0;
     let age = parseInt(ageElement.value) || 0;
     let career = parseInt(document.getElementById('e74_career')?.value) || 0; 
-    let violationCount = parseInt(document.getElementById('e74_violation_count')?.value) || 0; // ReferenceError 해결
     
-    // HTML 출력/제어 요소
-    const resultBox = document.getElementById('e74Result');
-    const docBox = document.getElementById('e74DocumentGuidance'); 
-    const closeArea = document.getElementById('e74CloseButtonArea'); 
-    const scoreTableArea = document.getElementById('e74ScoreTableArea'); 
+    // 🚨 ReferenceError 해결: violationCount를 const/let으로 명확히 선언하고 값을 할당
+    let violationCount = parseInt(violationElement.value) || 0; 
     
     // 가점 항목 체크박스 (안전한 호출)
     const techCheck = document.getElementById('e74_tech')?.checked || false;
@@ -163,7 +158,12 @@ function calculateE74() {
     const localCheck = document.getElementById('e74_local')?.checked || false;
     const serviceCheck = document.getElementById('e74_service')?.checked || false;
 
-    // 3. 점수 계산 초기화 및 상수 정의
+    const resultBox = document.getElementById('e74Result');
+    const docBox = document.getElementById('e74DocumentGuidance'); 
+    const closeArea = document.getElementById('e74CloseButtonArea'); 
+    const scoreTableArea = document.getElementById('e74ScoreTableArea'); 
+
+    // 3. 점수 계산
     let incomeScore = 0;
     let ageScore = 0;
     let careerScore = 0;
