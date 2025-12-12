@@ -46,22 +46,15 @@
                     <button class="menu-item" onclick="alert('E-2 심사 가이드 모듈 연결 예정')">🛠️ E-2 회화지도 심사 가이드</button>
                 </div>
             </div>
-<!--
+
             <div class="visa-group h-series">
-                <h2>H계열 비자 (방문취업)</h2>
-                <div class="menu-grid">
-                    <button class="menu-item" onclick="openModal('h2Modal')">🛠️ H-2 취업 가능성 상세 진단</button>
-                    <button class="menu-item" onclick="alert('H-1 요건 안내 모듈 연결 예정')">📝 H-1 관광취업 요건 안내</button>
-                </div>
-            </div>
--->
-             <div class="visa-group h-series">
                 <h2>H계열 비자 (방문취업)</h2>
                 <div class="menu-grid">
                     <button class="menu-item" onclick="openModal('h2Modal')">🛠️ H-2 취업 가능성 상세 진단</button>
                     <button class="menu-item" onclick="openModal('h1Modal')">📝 H-1 관광취업 요건 안내</button> 
                 </div>
             </div>
+
             <div class="visa-group d-series">
                 <h2>D계열 비자 (유학, 연수, 투자)</h2>
                 <div class="menu-grid">
@@ -89,37 +82,42 @@
         </section>
     </main>
 
-    <div id="e74Modal" class="modal">...</div>
-    <div id="h2Modal" class="modal">...</div>
-<!--------   테스트 화면 띄우는 모달 시작  -->
+    <div id="e74Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
+            <h2>🎯 E-7-4 숙련기능인력 점수 진단</h2>
+            <form id="e74Form">
+                <label for="e74_income">연간 소득 (원):</label>
+                <input type="number" id="e74_income" required>
+                <button type="button" onclick="calculateE74()">🎯 점수 계산 및 최종 진단</button>
+            </form>
+            <div id="e74Result" class="result-box"></div>
+        </div>
+    </div>
+    
+    <div id="h2Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('h2Modal')">&times;</span>
+            <h2>🛠️ H-2 취업 가능성 상세 진단</h2>
+            <button onclick="calculateH2()">H-2 취업 가능 여부 확인</button>
+            <div id="h2Result" class="result-box"></div>
+        </div>
+    </div>
 
-<div id="h1Modal" class="modal">
+    <div id="h1Modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('h1Modal')">&times;</span> 
             <h2>📝 H-1 관광취업 요건 안내 (테스트 화면)</h2>
-            <div class="test-content" style="padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px;">
+            <div style="padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px;">
                 <p style="font-size: 1.1em; font-weight: bold; color: #007bff;">
                     이곳은 H-1 관광취업 비자 요건에 대한 상세 정보를 표시할 영역입니다.
                 </p>
-                <p>현재는 테스트를 위해 모달이 정상적으로 호출되었음을 보여주는 화면입니다. 모달 ID는 h1Modal입니다.</p>
-                
-                <p style="margin-top: 15px;">**H-1 비자 주요 안내 사항:**</p>
-                <ul>
-                    <li>협정 체결 국가 국민만 신청 가능</li>
-                    <li>주로 1년 체류 기간 부여</li>
-                    <li>주된 목적은 관광이며, 부차적으로 취업 활동 허용</li>
-                </ul>
             </div>
-            
             <button onclick="closeModal('h1Modal')" style="margin-top: 20px; background-color: #5cb85c;">확인 후 닫기</button>
         </div>
     </div>
     
-
-<!--  테스트 화면 띄우는 모달 종료 -->
-
-    
-    <script src="script.js"></script>
+    <script src="script.js"></script> 
     <script src="e74.js"></script>
     <script src="h2.js"></script>
 </body>
