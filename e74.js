@@ -130,14 +130,24 @@ function calculateE74() {
     document.getElementById('e74CloseButtonArea').style.display = 'none';
     document.getElementById('e74ScoreTableArea').style.display = 'none'; 
 
-    // 1. 입력 값 가져오기
-    const income = parseInt(document.getElementById('e74_income').value) || 0;
+    // 1. 입력 값 유효성 검사 및 가져오기
+    const incomeElement = document.getElementById('e74_income');
+    const ageElement = document.getElementById('e74_age');
+
+    // 🚨 문제점 1 해결: 필수 입력 값 검사 로직 추가
+    if (!incomeElement || !incomeElement.value || !ageElement || !ageElement.value) {
+        document.getElementById('e74Result').innerHTML = 
+            '<p style="color:red; font-weight:bold;">⚠️ 필수 항목 (① 연간 소득, ③ 만 나이)을 입력해 주세요!</p>';
+        return; // 계산 중단
+    }
+
+    const income = parseInt(incomeElement.value);
     const koreanScore = parseInt(document.getElementById('e74_korean').value) || 0;
-    const age = parseInt(document.getElementById('e74_age').value) || 0;
+    const age = parseInt(ageElement.value);
     const career = parseInt(document.getElementById('e74_career').value) || 0; // 개월 수
     const violationCount = parseInt(document.getElementById('e74_violation_count').value) || 0;
 
-    // 가점 항목 체크박스
+    // 가점 항목 체크박스 (이전 답변 코드와 동일)
     const techCheck = document.getElementById('e74_tech').checked;
     const degreeCheck = document.getElementById('e74_degree').checked;
     const kiipCompCheck = document.getElementById('e74_kiipcomp').checked;
@@ -179,18 +189,24 @@ function calculateE74() {
 
     // 국내 경력 점수
     careerScore = Math.min(50, Math.floor(career / 12) * 10);
-    
+
     // --- II. 가점 및 III. 감점 계산 ---
     bonusScore = (techCheck ? 10 : 0) + (degreeCheck ? 10 : 0) + (assetCheck ? 5 : 0) + (localCheck ? 10 : 0) + (kiipCompCheck ? 10 : 0) + (serviceCheck ? 5 : 0);
     penaltyScore = (violationCount >= 3) ? -50 : (violationCount === 2) ? -10 : (violationCount === 1) ? -5 : 0;
     
-    // 🚨 핵심 수정: 총점 계산 로직을 명확하게 합산
+    // 🚨 총점 계산 (명확하게 합산)
     totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
     
     // --- IV. 필수 요건 최종 확인 ---
-    if (incomeScore < REQUIRED_INCOME_MIN_POINT || koreanScore < REQUIRED_KOREAN_MIN_POINT || violationCount >= 3) {
+    if (incomeScore < REQUIRED_INCOME_MIN_POINT) {
         requiredConditionMet = false;
-        // requiredMessage 설정 (생략)
+        requiredMessage = `소득 점수(${incomeScore}점)가 필수 최소 점수(${REQUIRED_INCOME_MIN_POINT}점)에 미달합니다.`;
+    } else if (koreanScore < REQUIRED_KOREAN_MIN_POINT) {
+        requiredConditionMet = false;
+        requiredMessage = `한국어 점수(${koreanScore}점)가 필수 최소 점수(${REQUIRED_KOREAN_MIN_POINT}점)에 미달합니다.`;
+    } else if (violationCount >= 3) {
+        requiredConditionMet = false;
+        requiredMessage = '출입국관리법 위반 3회 이상으로 즉시 불허 사유입니다.';
     }
 
     // 3. 최종 진단
@@ -227,10 +243,10 @@ function calculateE74() {
             <li>- 가점 합계: <strong style="color: green;">+${bonusScore}점</strong></li>
             <li>- 감점 합계: <strong style="color: red;">${penaltyScore}점</strong></li>
         </ul>
-        <p class="note">※ 본 진단은 참고용입니다.</p>
+        ${requiredMessage ? `<p style="color:red; font-weight:bold;">필수 요건 미충족 사유: ${requiredMessage}</p>` : ''}
     `;
 
-    // 5. 배점표 기준 출력 (추가된 기능)
+    // 5. 배점표 기준 출력
     scoreTableArea.innerHTML = generateScoreTable();
     scoreTableArea.style.display = 'block'; // 배점표 영역 활성화
     
