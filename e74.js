@@ -130,7 +130,7 @@ function calculateE74() {
     const incomeElement = document.getElementById('e74_income');
     const ageElement = document.getElementById('e74_age');
 
-    // 🚨 필수 요소가 존재하는지 확인 및 필수 입력 값 검사
+    // 🚨 필수 요소 존재 확인 및 필수 입력 값 검사
     if (!incomeElement || !ageElement) {
         document.getElementById('e74Result').innerHTML = 
             '<p style="color:red; font-weight:bold;">❌ 시스템 오류: HTML 요소를 찾을 수 없습니다. (ID 불일치 가능성)</p>';
@@ -148,7 +148,7 @@ function calculateE74() {
     const age = parseInt(ageElement.value) || 0;
     const career = parseInt(document.getElementById('e74_career')?.value) || 0; 
     
-    // 🚨 ReferenceError 해결: 변수를 선언과 동시에 할당하고 사용
+    // 🚨 ReferenceError 해결: 변수 선언 시 let을 사용하고, 안전하게 파싱합니다.
     const violationCount = parseInt(document.getElementById('e74_violation_count')?.value) || 0; 
     
     // 가점 항목 체크박스 (안전한 호출)
@@ -196,11 +196,11 @@ function calculateE74() {
     // --- II. 가점 및 III. 감점 계산 ---
     bonusScore = (techCheck ? 10 : 0) + (degreeCheck ? 10 : 0) + (assetCheck ? 5 : 0) + (localCheck ? 10 : 0) + (kiipCompCheck ? 10 : 0) + (serviceCheck ? 5 : 0);
     
-    // 감점 계산 시, 'violationCount' 변수 사용
+    // 감점 계산 시 'violationCount' 변수 사용
     penaltyScore = (violationCount >= 3) ? -50 : (violationCount === 2) ? -10 : (violationCount === 1) ? -5 : 0;
     
     // 🚨 총점 계산
-    totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
+    let totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
     
     // --- IV. 필수 요건 최종 확인 ---
     if (incomeScore < REQUIRED_INCOME_MIN_POINT) {
@@ -208,61 +208,4 @@ function calculateE74() {
         requiredMessage = `소득 점수(${incomeScore}점)가 필수 최소 점수(${REQUIRED_INCOME_MIN_POINT}점)에 미달합니다.`;
     } else if (koreanScore < REQUIRED_KOREAN_MIN_POINT) {
         requiredConditionMet = false;
-        requiredMessage = `한국어 점수(${koreanScore}점)가 필수 최소 점수(${REQUIRED_KOREAN_MIN_POINT}점)에 미달합니다.`;
-    } else if (violationCount >= 3) {
-        requiredConditionMet = false;
-        requiredMessage = '출입국관리법 위반 3회 이상으로 즉시 불허 사유입니다.';
-    }
-
-    // 3. 최종 진단
-    let diagnosisStatus = '';
-    let resultColor = 'red';
-    let isPass = false;
-
-    if (!requiredConditionMet) {
-        diagnosisStatus = `⛔ 불허 (필수 요건 미충족)`;
-        resultColor = 'red';
-    } else if (totalScore >= REQUIRED_MIN_SCORE) {
-        diagnosisStatus = `✅ 적격 (PASS) - 합격 가능성이 높습니다.`;
-        resultColor = 'green';
-        isPass = true;
-    } else {
-        diagnosisStatus = `⚠️ 부적격 (총점 미달)`;
-        resultColor = 'orange';
-    }
-
-    // 4. 결과 출력
-    resultBox.innerHTML = `
-        <h3>✨ E-7-4 최종 진단 결과</h3>
-        <p><strong>총 점수:</strong> <span style="font-size: 1.5em; font-weight: 900; color: ${resultColor};">${totalScore}점</span> (기준 ${REQUIRED_MIN_SCORE}점)</p>
-        <p><strong>최종 진단:</strong> <span style="font-weight: bold; color: ${resultColor};">${diagnosisStatus}</span></p>
-        <hr>
-        <h4>[항목별 상세 배정 점수]</h4>
-        <ul style="list-style-type: none; padding-left: 0;">
-            <li style="font-weight: bold; margin-bottom: 5px;">기본 점수 (최대 200점)</li>
-            <li>- ① 소득 (${(income / 10000).toFixed(0)}만원): <strong style="color: ${incomeScore > 0 ? 'blue' : 'gray'};">${incomeScore}점</strong></li>
-            <li>- ② 한국어 능력: <strong style="color: ${koreanScore > 0 ? 'blue' : 'gray'};">${koreanScore}점</strong></li>
-            <li>- ③ 나이 (만 ${age}세): <strong style="color: ${ageScore > 0 ? 'blue' : 'gray'};">${ageScore}점</strong></li>
-            <li>- ④ 국내 경력 (${(career / 12).toFixed(1)}년): <strong style="color: ${careerScore > 0 ? 'blue' : 'gray'};">${careerScore}점</strong></li>
-            <li style="font-weight: bold; margin-top: 10px;">가점/감점 (최대 90점)</li>
-            <li>- 가점 합계: <strong style="color: green;">+${bonusScore}점</strong></li>
-            <li>- 감점 합계: <strong style="color: red;">${penaltyScore}점</strong></li>
-        </ul>
-        ${requiredMessage ? `<p style="color:red; font-weight:bold;">필수 요건 미충족 사유: ${requiredMessage}</p>` : ''}
-    `;
-
-    // 5. 배점표 기준 출력
-    scoreTableArea.innerHTML = generateScoreTable();
-    scoreTableArea.style.display = 'block'; // 배점표 영역 활성화
-    
-    // 6. 서류 안내 및 닫기 버튼 제어
-    if (isPass) {
-        docBox.innerHTML = generateDocumentList();
-        docBox.style.display = 'block';
-        closeArea.style.display = 'block'; // 닫기 버튼 영역 활성화
-    } else {
-        docBox.innerHTML = '';
-        docBox.style.display = 'none';
-        closeArea.style.display = 'none'; // 닫기 버튼 영역 비활성화
-    }
-}
+        requiredMessage = `한국어 점수(${koreanScore}점)가 필수 최소 점수(${REQUIRED_KOREAN_MIN_
