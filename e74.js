@@ -1,9 +1,8 @@
-// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (최종 복구 및 안정화 버전)
+// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (최종 안정화 버전)
 
-const GNI_2025_ESTIMATE = 42200000;
+const GNI_2025_ESTIMATE = 42200000; // 2024년 GNI (4,220만원) 기준 가정
 const GNI_MANWON = (GNI_2025_ESTIMATE / 10000).toFixed(0);
 
-// 점수 구간을 찾는 범용 함수 (변경 없음)
 function getScoreRange(value, tiers) {
     for (const tier of tiers) {
         if (value >= tier.min) {
@@ -13,8 +12,8 @@ function getScoreRange(value, tiers) {
     return 0;
 }
 
-// 서류 목록 생성 함수 (변경 없음)
 function generateDocumentList() {
+    // 서류 목록 생성 함수 (변경 없음)
     return `
         <h3>✅ E-7-4 비자 신청 필수 서류 (적격자용)</h3>
         <p style="font-style: italic;">* 모든 서류는 발급일로부터 3개월 이내여야 합니다.</p>
@@ -31,8 +30,8 @@ function generateDocumentList() {
     `;
 }
 
-// 배점표 기준표 생성 함수 (변경 없음)
 function generateScoreTable() {
+    // 배점표 기준표 생성 함수 (변경 없음)
     return `
         <style>
             .base-score-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
@@ -41,7 +40,7 @@ function generateScoreTable() {
         </style>
         
         <h4>⭐ E-7-4 비자 배점 기준표 (참고용)</h4>
-        
+
         <h5>A. 기본 항목 (최대 200점)</h5>
         <table class="base-score-table">
             <tr><th>배점 항목</th><th>배정 기준 및 점수</th><th>최대 점수</th></tr>
@@ -120,9 +119,6 @@ function resetE74Form() {
     alert('모든 입력 내용이 초기화되었습니다.');
 }
 
-// -------------------------------------------------------------
-// *핵심 계산 함수*
-// -------------------------------------------------------------
 function calculateE74() {
     // 🚨 계산 시작 시 기존 결과 영역 및 배점표 영역을 숨깁니다.
     document.getElementById('e74Result').innerHTML = '';
@@ -130,40 +126,38 @@ function calculateE74() {
     document.getElementById('e74CloseButtonArea').style.display = 'none';
     document.getElementById('e74ScoreTableArea').style.display = 'none'; 
 
-    // 1. 입력 값 가져오기 (요소 존재 확인 로직 강화)
+    // 1. 입력 값 가져오기 (요소 존재 확인 및 안전한 값 파싱)
     const incomeElement = document.getElementById('e74_income');
-    const koreanElement = document.getElementById('e74_korean');
     const ageElement = document.getElementById('e74_age');
-    const careerElement = document.getElementById('e74_career');
-    const violationElement = document.getElementById('e74_violation_count');
 
-    // 필수 요소가 하나라도 누락되면 즉시 오류 메시지 출력 (index.html ID 오류 방지)
-    if (!incomeElement || !koreanElement || !ageElement || !violationElement) {
+    // 🚨 필수 요소가 존재하는지 확인 및 필수 입력 값 검사
+    if (!incomeElement || !ageElement) {
         document.getElementById('e74Result').innerHTML = 
             '<p style="color:red; font-weight:bold;">❌ 시스템 오류: HTML 요소를 찾을 수 없습니다. (ID 불일치 가능성)</p>';
         return; 
     }
-
-    // 필수 입력 값 검사 (required 속성을 제거했으므로 JS에서 검사)
     if (!incomeElement.value || !ageElement.value) {
         document.getElementById('e74Result').innerHTML = 
             '<p style="color:red; font-weight:bold;">⚠️ 필수 항목 (소득, 나이)을 입력해 주세요!</p>';
         return; // 계산 중단
     }
 
-    // 값 파싱
-    const income = parseInt(incomeElement.value);
-    const koreanScore = parseInt(koreanElement.value);
-    const age = parseInt(ageElement.value);
-    const career = parseInt(careerElement.value) || 0; // 경력은 비워도 0으로 처리
-
-    // 가점 항목 체크박스 (간소화)
-    const techCheck = document.getElementById('e74_tech').checked;
-    const degreeCheck = document.getElementById('e74_degree').checked;
-    const kiipCompCheck = document.getElementById('e74_kiipcomp').checked;
-    const assetCheck = document.getElementById('e74_asset').checked;
-    const localCheck = document.getElementById('e74_local').checked;
-    const serviceCheck = document.getElementById('e74_service').checked;
+    // 값 파싱 (violationCount를 포함하여 모든 값을 안전하게 파싱)
+    const income = parseInt(incomeElement.value) || 0;
+    const koreanScore = parseInt(document.getElementById('e74_korean')?.value) || 0;
+    const age = parseInt(ageElement.value) || 0;
+    const career = parseInt(document.getElementById('e74_career')?.value) || 0; 
+    
+    // 🚨 ReferenceError 해결: 변수를 선언과 동시에 할당하고 사용
+    const violationCount = parseInt(document.getElementById('e74_violation_count')?.value) || 0; 
+    
+    // 가점 항목 체크박스 (안전한 호출)
+    const techCheck = document.getElementById('e74_tech')?.checked || false;
+    const degreeCheck = document.getElementById('e74_degree')?.checked || false;
+    const kiipCompCheck = document.getElementById('e74_kiipcomp')?.checked || false;
+    const assetCheck = document.getElementById('e74_asset')?.checked || false;
+    const localCheck = document.getElementById('e74_local')?.checked || false;
+    const serviceCheck = document.getElementById('e74_service')?.checked || false;
 
     const resultBox = document.getElementById('e74Result');
     const docBox = document.getElementById('e74DocumentGuidance'); 
@@ -201,10 +195,12 @@ function calculateE74() {
 
     // --- II. 가점 및 III. 감점 계산 ---
     bonusScore = (techCheck ? 10 : 0) + (degreeCheck ? 10 : 0) + (assetCheck ? 5 : 0) + (localCheck ? 10 : 0) + (kiipCompCheck ? 10 : 0) + (serviceCheck ? 5 : 0);
-    penaltyScore = (parseInt(violationCount) >= 3) ? -50 : (parseInt(violationCount) === 2) ? -10 : (parseInt(violationCount) === 1) ? -5 : 0;
     
-    // 🚨 총점 계산 (명확하게 합산)
-    let totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
+    // 감점 계산 시, 'violationCount' 변수 사용
+    penaltyScore = (violationCount >= 3) ? -50 : (violationCount === 2) ? -10 : (violationCount === 1) ? -5 : 0;
+    
+    // 🚨 총점 계산
+    totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
     
     // --- IV. 필수 요건 최종 확인 ---
     if (incomeScore < REQUIRED_INCOME_MIN_POINT) {
@@ -213,7 +209,7 @@ function calculateE74() {
     } else if (koreanScore < REQUIRED_KOREAN_MIN_POINT) {
         requiredConditionMet = false;
         requiredMessage = `한국어 점수(${koreanScore}점)가 필수 최소 점수(${REQUIRED_KOREAN_MIN_POINT}점)에 미달합니다.`;
-    } else if (parseInt(violationCount) >= 3) {
+    } else if (violationCount >= 3) {
         requiredConditionMet = false;
         requiredMessage = '출입국관리법 위반 3회 이상으로 즉시 불허 사유입니다.';
     }
@@ -235,7 +231,7 @@ function calculateE74() {
         resultColor = 'orange';
     }
 
-    // 4. 결과 출력 (총점 및 상세 점수 포함)
+    // 4. 결과 출력
     resultBox.innerHTML = `
         <h3>✨ E-7-4 최종 진단 결과</h3>
         <p><strong>총 점수:</strong> <span style="font-size: 1.5em; font-weight: 900; color: ${resultColor};">${totalScore}점</span> (기준 ${REQUIRED_MIN_SCORE}점)</p>
