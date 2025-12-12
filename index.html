@@ -54,32 +54,8 @@
                     <button class="menu-item" onclick="openModal('h1Modal')">📝 H-1 관광취업 요건 안내</button> 
                 </div>
             </div>
-
-            <div class="visa-group d-series">
-                <h2>D계열 비자 (유학, 연수, 투자)</h2>
-                <div class="menu-grid">
-                    <button class="menu-item" onclick="alert('D-8 투자 요건 체크 모듈 연결 예정')">🛠️ D-8 기업투자 요건 체크</button>
-                    <button class="menu-item" onclick="alert('D-2 체류 조건 모듈 연결 예정')">📝 D-2 유학 체류 조건 안내</button>
-                    <button class="menu-item" onclick="alert('D-10 조건 안내 모듈 연결 예정')">📝 D-10 구직 비자 조건 안내</button>
-                </div>
-            </div>
             
-            <div class="visa-group a-series">
-                <h2>A계열 비자 (외교, 공무, 협정)</h2>
-                <div class="menu-grid">
-                    <button class="menu-item disabled" onclick="alert('A계열 비자는 통상 외교부/법무부 협의를 요합니다.')">A-1/A-2/A-3 정보 참조</button>
-                </div>
-            </div>
-            
-            <div class="visa-group common-tools">
-                <h2>📌 공통 지원 기능</h2>
-                <div class="menu-grid">
-                    <button class="menu-item highlight-alt" onclick="alert('통합 서류 안내 모듈 연결 예정')">📝 체류 자격별 필수 서류 안내</button>
-                    <button class="menu-item highlight-alt" onclick="alert('변경/연장 절차 가이드 모듈 연결 예정')">📝 비자 변경/연장 절차 가이드</button>
-                </div>
-            </div>
-
-        </section>
+            </section>
     </main>
 
     <div id="e74Modal" class="modal">
@@ -98,8 +74,9 @@
     <div id="h2Modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('h2Modal')">&times;</span>
-            <h2>🛠️ H-2 취업 가능성 상세 진단</h2>
-            <button onclick="calculateH2()">H-2 취업 가능 여부 확인</button>
+            <h2>🛠️ H-2 취업 가능성 상세 진단 (테스트 화면)</h2>
+            <p>H-2 취업 가능성 진단 모듈이 정상 호출되었습니다.</p>
+             <button type="button" onclick="calculateH2()">H-2 취업 가능 여부 확인</button>
             <div id="h2Result" class="result-box"></div>
         </div>
     </div>
@@ -110,7 +87,7 @@
             <h2>📝 H-1 관광취업 요건 안내 (테스트 화면)</h2>
             <div style="padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px;">
                 <p style="font-size: 1.1em; font-weight: bold; color: #007bff;">
-                    이곳은 H-1 관광취업 비자 요건에 대한 상세 정보를 표시할 영역입니다.
+                    H-1 모달이 정상적으로 호출되었습니다.
                 </p>
             </div>
             <button onclick="closeModal('h1Modal')" style="margin-top: 20px; background-color: #5cb85c;">확인 후 닫기</button>
