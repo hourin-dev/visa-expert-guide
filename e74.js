@@ -13,7 +13,6 @@ function getScoreRange(value, tiers) {
 }
 
 function generateDocumentList() {
-    // 서류 목록 생성 함수 (변경 없음)
     return `
         <h3>✅ E-7-4 비자 신청 필수 서류 (적격자용)</h3>
         <p style="font-style: italic;">* 모든 서류는 발급일로부터 3개월 이내여야 합니다.</p>
@@ -31,7 +30,6 @@ function generateDocumentList() {
 }
 
 function generateScoreTable() {
-    // 배점표 기준표 생성 함수 (변경 없음)
     return `
         <style>
             .base-score-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95em; }
@@ -126,30 +124,36 @@ function calculateE74() {
     document.getElementById('e74CloseButtonArea').style.display = 'none';
     document.getElementById('e74ScoreTableArea').style.display = 'none'; 
 
-    // 1. 입력 값 가져오기 (요소 존재 확인 및 안전한 값 파싱)
+    // 1. 입력 요소 가져오기 (요소 존재 확인 및 안전한 값 파싱)
     const incomeElement = document.getElementById('e74_income');
     const ageElement = document.getElementById('e74_age');
 
-    // 🚨 필수 요소 존재 확인 및 필수 입력 값 검사
+    // 🚨 필수 요소 존재 확인
     if (!incomeElement || !ageElement) {
         document.getElementById('e74Result').innerHTML = 
-            '<p style="color:red; font-weight:bold;">❌ 시스템 오류: HTML 요소를 찾을 수 없습니다. (index.html ID 불일치 가능성)</p>';
+            '<p style="color:red; font-weight:bold;">❌ 시스템 오류: HTML 요소를 찾을 수 없습니다. (index.html 확인 필요)</p>';
         return; 
     }
+    // 필수 입력 값 검사
     if (!incomeElement.value || !ageElement.value) {
         document.getElementById('e74Result').innerHTML = 
             '<p style="color:red; font-weight:bold;">⚠️ 필수 항목 (소득, 나이)을 입력해 주세요!</p>';
         return; // 계산 중단
     }
 
-    // 값 파싱 (모든 값을 안전하게 파싱)
-    const income = parseInt(incomeElement.value) || 0;
-    const koreanScore = parseInt(document.getElementById('e74_korean')?.value) || 0;
-    const age = parseInt(ageElement.value) || 0;
-    const career = parseInt(document.getElementById('e74_career')?.value) || 0; 
+    // 2. 변수 선언 및 값 파싱
+    // 모든 계산 변수를 함수 스코프 내에서 명확하게 선언합니다.
+    let income = parseInt(incomeElement.value) || 0;
+    let koreanScore = parseInt(document.getElementById('e74_korean')?.value) || 0;
+    let age = parseInt(ageElement.value) || 0;
+    let career = parseInt(document.getElementById('e74_career')?.value) || 0; 
+    let violationCount = parseInt(document.getElementById('e74_violation_count')?.value) || 0; // ReferenceError 해결
     
-    // 🚨 ReferenceError 해결: violationCount를 const/let으로 명확히 선언하고 값을 할당
-    const violationCount = parseInt(document.getElementById('e74_violation_count')?.value) || 0; 
+    // HTML 출력/제어 요소
+    const resultBox = document.getElementById('e74Result');
+    const docBox = document.getElementById('e74DocumentGuidance'); 
+    const closeArea = document.getElementById('e74CloseButtonArea'); 
+    const scoreTableArea = document.getElementById('e74ScoreTableArea'); 
     
     // 가점 항목 체크박스 (안전한 호출)
     const techCheck = document.getElementById('e74_tech')?.checked || false;
@@ -159,12 +163,7 @@ function calculateE74() {
     const localCheck = document.getElementById('e74_local')?.checked || false;
     const serviceCheck = document.getElementById('e74_service')?.checked || false;
 
-    const resultBox = document.getElementById('e74Result');
-    const docBox = document.getElementById('e74DocumentGuidance'); 
-    const closeArea = document.getElementById('e74CloseButtonArea'); 
-    const scoreTableArea = document.getElementById('e74ScoreTableArea'); 
-
-    // 2. 점수 계산
+    // 3. 점수 계산 초기화 및 상수 정의
     let incomeScore = 0;
     let ageScore = 0;
     let careerScore = 0;
@@ -203,7 +202,6 @@ function calculateE74() {
     let totalScore = incomeScore + koreanScore + ageScore + careerScore + bonusScore + penaltyScore;
     
     // --- IV. 필수 요건 최종 확인 ---
-    // 🚨 오류 수정: REQUIRED_KOREAN_MIN_POINT 이후의 코드를 포함하여, 문제의 204번째 줄 (추정) 이후의 로직 오류를 방지합니다.
     if (incomeScore < REQUIRED_INCOME_MIN_POINT) {
         requiredConditionMet = false;
         requiredMessage = `소득 점수(${incomeScore}점)가 필수 최소 점수(${REQUIRED_INCOME_MIN_POINT}점)에 미달합니다.`;
@@ -215,7 +213,7 @@ function calculateE74() {
         requiredMessage = '출입국관리법 위반 3회 이상으로 즉시 불허 사유입니다.';
     }
 
-    // 3. 최종 진단
+    // 4. 최종 진단
     let diagnosisStatus = '';
     let resultColor = 'red';
     let isPass = false;
@@ -232,7 +230,7 @@ function calculateE74() {
         resultColor = 'orange';
     }
 
-    // 4. 결과 출력
+    // 5. 결과 출력
     resultBox.innerHTML = `
         <h3>✨ E-7-4 최종 진단 결과</h3>
         <p><strong>총 점수:</strong> <span style="font-size: 1.5em; font-weight: 900; color: ${resultColor};">${totalScore}점</span> (기준 ${REQUIRED_MIN_SCORE}점)</p>
@@ -252,11 +250,11 @@ function calculateE74() {
         ${requiredMessage ? `<p style="color:red; font-weight:bold;">필수 요건 미충족 사유: ${requiredMessage}</p>` : ''}
     `;
 
-    // 5. 배점표 기준 출력
+    // 6. 배점표 기준 출력
     scoreTableArea.innerHTML = generateScoreTable();
     scoreTableArea.style.display = 'block'; // 배점표 영역 활성화
     
-    // 6. 서류 안내 및 닫기 버튼 제어
+    // 7. 서류 안내 및 닫기 버튼 제어
     if (isPass) {
         docBox.innerHTML = generateDocumentList();
         docBox.style.display = 'block';
