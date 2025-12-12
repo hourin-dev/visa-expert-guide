@@ -227,4 +227,21 @@ function calculateE74() {
             <li>- 가점 합계: <strong style="color: green;">+${bonusScore}점</strong></li>
             <li>- 감점 합계: <strong style="color: red;">${penaltyScore}점</strong></li>
         </ul>
-        <p
+        <p class="note">※ 본 진단은 참고용입니다.</p>
+    `;
+
+    // 5. 배점표 기준 출력 (추가된 기능)
+    scoreTableArea.innerHTML = generateScoreTable();
+    scoreTableArea.style.display = 'block'; // 배점표 영역 활성화
+    
+    // 6. 서류 안내 및 닫기 버튼 제어
+    if (isPass) {
+        docBox.innerHTML = generateDocumentList();
+        docBox.style.display = 'block';
+        closeArea.style.display = 'block'; // 닫기 버튼 영역 활성화
+    } else {
+        docBox.innerHTML = '';
+        docBox.style.display = 'none';
+        closeArea.style.display = 'none'; // 닫기 버튼 영역 비활성화
+    }
+}
