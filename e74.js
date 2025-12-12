@@ -1,6 +1,6 @@
-// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (최종 안정화 버전)
+// e74.js: E-7-4 숙련기능인력 점수 계산 및 진단 로직 (입력 초기화 기능 추가)
 
-const GNI_2025_ESTIMATE = 42200000; // 2024년 GNI (4,220만원) 기준 가정
+const GNI_2025_ESTIMATE = 42200000;
 
 function getScoreRange(value, tiers) {
     for (const tier of tiers) {
@@ -11,10 +11,8 @@ function getScoreRange(value, tiers) {
     return 0;
 }
 
-// -------------------------------------------------------------
-// *추가된 기능* - 적격 시 서류 목록 HTML 생성 함수
-// -------------------------------------------------------------
 function generateDocumentList() {
+    // 적격 판정 시 안내할 필수 서류 목록 HTML 생성 (이전과 동일)
     return `
         <h3>✅ E-7-4 비자 신청 필수 서류 (적격자용)</h3>
         <p style="font-style: italic;">* 모든 서류는 발급일로부터 3개월 이내여야 합니다.</p>
@@ -30,9 +28,31 @@ function generateDocumentList() {
         <p style="margin-top: 10px; color: #d9534f;">⚠️ **주의:** 상기 서류 외, 심사 과정에서 추가 서류가 요구될 수 있습니다.</p>
     `;
 }
+
+// -------------------------------------------------------------
+// *새로 추가된 함수* - 입력 내용 초기화 함수
+// -------------------------------------------------------------
+function resetE74Form() {
+    // 폼 전체를 초기화합니다.
+    document.getElementById('e74Form').reset();
+    
+    // 결과 출력 영역도 비우고 숨깁니다.
+    document.getElementById('e74Result').innerHTML = '';
+    document.getElementById('e74DocumentGuidance').innerHTML = '';
+    document.getElementById('e74DocumentGuidance').style.display = 'none';
+    document.getElementById('e74CloseButtonArea').style.display = 'none';
+    
+    alert('모든 입력 내용이 초기화되었습니다.');
+}
 // -------------------------------------------------------------
 
+
 function calculateE74() {
+    // 🚨 업데이트: 계산 시작 시 기존 결과 영역을 숨깁니다.
+    document.getElementById('e74Result').innerHTML = '';
+    document.getElementById('e74DocumentGuidance').style.display = 'none';
+    document.getElementById('e74CloseButtonArea').style.display = 'none';
+
     // 1. 입력 값 가져오기
     const income = parseInt(document.getElementById('e74_income').value) || 0;
     const koreanScore = parseInt(document.getElementById('e74_korean').value) || 0;
@@ -40,7 +60,7 @@ function calculateE74() {
     const career = parseInt(document.getElementById('e74_career').value) || 0;
     const violationCount = parseInt(document.getElementById('e74_violation_count').value) || 0;
 
-    // 가점 항목 체크박스
+    // 가점 항목 체크박스 (이전 답변 코드와 동일)
     const techCheck = document.getElementById('e74_tech').checked;
     const degreeCheck = document.getElementById('e74_degree').checked;
     const kiipCompCheck = document.getElementById('e74_kiipcomp').checked;
@@ -50,7 +70,7 @@ function calculateE74() {
 
     const resultBox = document.getElementById('e74Result');
     const docBox = document.getElementById('e74DocumentGuidance'); 
-    const closeArea = document.getElementById('e74CloseButtonArea'); // 닫기 버튼 영역
+    const closeArea = document.getElementById('e74CloseButtonArea'); 
 
     // 2. 점수 및 필수 요건 설정 (로직은 이전 답변과 동일)
     let totalScore = 0;
@@ -67,8 +87,6 @@ function calculateE74() {
     const REQUIRED_KOREAN_MIN_POINT = 20;
 
     // --- I, II, III. 점수 계산 로직 (중략) ---
-    // (이전 답변의 E-7-4 점수 계산 로직을 그대로 사용합니다.)
-    
     // 소득 점수
     const incomeTiers = [
         { min: GNI_2025_ESTIMATE * 1.5, score: 80 }, { min: GNI_2025_ESTIMATE * 0.5, score: 10 }
@@ -106,7 +124,7 @@ function calculateE74() {
         resultColor = 'orange';
     }
 
-    // 4. 결과 출력
+    // 4. 결과 출력 (HTML 그대로 유지)
     resultBox.innerHTML = `
         <h3>✨ E-7-4 최종 진단 결과</h3>
         <p><strong>총 점수:</strong> <span style="font-size: 1.2em; color: ${resultColor};">${totalScore}점</span> (기준 ${REQUIRED_MIN_SCORE}점)</p>
@@ -115,18 +133,14 @@ function calculateE74() {
         <p class="note">※ 본 진단은 참고용이며, 최종 심사는 법무부 지침에 따릅니다.</p>
     `;
 
-    // 5. 서류 안내 및 닫기 버튼 제어 (핵심 안정화 로직)
+    // 5. 서류 안내 및 닫기 버튼 제어
     if (isPass) {
-        // 🚨 서류 목록 삽입 및 보이게 설정
         docBox.innerHTML = generateDocumentList();
         docBox.style.display = 'block';
-        
-        // 🚨 닫기 버튼 영역 보이게 설정
-        closeArea.style.display = 'block';
+        closeArea.style.display = 'block'; // 닫기 버튼 영역 활성화
     } else {
-        // 부적격 시 서류 안내 및 닫기 버튼 숨김
         docBox.innerHTML = '';
         docBox.style.display = 'none';
-        closeArea.style.display = 'none';
+        closeArea.style.display = 'none'; // 닫기 버튼 영역 비활성화
     }
 }
