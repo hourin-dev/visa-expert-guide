@@ -6,6 +6,25 @@
     <title>출입국 비자 전문 컨설턴트 | Visa Expert Guide</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* 모달 기본 스타일 (style.css에 없다면 필요) */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            overflow: auto; background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 5% auto; padding: 20px; border: 1px solid #888;
+            width: 90%; max-width: 700px; border-radius: 8px; position: relative;
+        }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
+        
+        /* E-7-1 로직 스타일 (e71.js에도 일부 인라인 스타일이 포함됨) */
+        #e71ProgramContent input, #e71ProgramContent select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        #e71ProgramContent .input-group { margin-bottom: 10px; border: 1px solid #eee; padding: 10px; border-radius: 4px; }
+        #e71ProgramContent button.diagnose { background-color: #3498db; color: white; border: none; padding: 10px; width: 48%; }
+        #e71ProgramContent button.reset { background-color: #95a5a6; color: white; border: none; padding: 10px; width: 48%; }
+    </style>
 </head>
 <body>
 
@@ -40,12 +59,12 @@
                 <h2>E계열 비자 (전문직, 특정활동, 취업)</h2>
                 <div class="menu-grid">
                     <button class="menu-item highlight" onclick="openModal('e74Modal')">🎯 E-7-4 숙련기능인력 진단</button>
-                    <button class="menu-item" onclick="alert('E-7-1 직종별 요건 진단 모듈 연결 예정')">🛠️ E-7-1 특정활동 조건 체크</button>
+                    <button class="menu-item" onclick="openE71Program()">🛠️ E-7-1 특정활동 조건 체크</button>
                     <button class="menu-item" onclick="alert('E-9/E-10 절차 안내 모듈 연결 예정')">📝 E-9/E-10 취업 절차 안내</button>
                     <button class="menu-item" onclick="alert('E-2 심사 가이드 모듈 연결 예정')">🛠️ E-2 회화지도 심사 가이드</button>
                 </div>
             </div>
-
+            
             <div class="visa-group h-series">
                 <h2>H계열 비자 (방문취업)</h2>
                 <div class="menu-grid">
@@ -81,17 +100,32 @@
         </section>
     </main>
 
+    <div id="e71Modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close-btn" onclick="closeModal('e71Modal')">&times;</span>
+            <h2>🛠️ E-7-1 특정활동 조건 체크 및 진단</h2>
+            
+            <div id="e71ProgramContent">
+                로딩 중...
+            </div>
+            
+            <div id="e71CloseButtonAreaInModal" style="padding-top: 10px;">
+                <button type="button" class="close-modal-btn" onclick="closeModal('e71Modal')" style="background-color: #5cb85c; color: white; border: none; padding: 10px;">
+                    결과 확인 완료 및 창 닫기
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <div id="e74Modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
             <h2>🎯 E-7-4 숙련기능인력 점수 진단</h2>
             <form id="e74Form">
-                
                 <h3>I. 필수 기본 항목 및 점수 (최대 200점)</h3>
-                
                 <label for="e74_income">① 연간 소득 (세전, 원):</label>
                 <input type="number" id="e74_income" placeholder="GNI 이상 입력 (필수)"> 
-                
                 <label for="e74_korean">② 한국어 능력 (KIIP/TOPIK):</label>
                 <select id="e74_korean">
                     <option value="0">선택 안함/미해당</option>
@@ -100,10 +134,8 @@
                     <option value="30">KIIP 3단계 이수 또는 TOPIK 3급 (30점)</option>
                     <option value="20">KIIP 2단계 이수 또는 TOPIK 2급 (20점)</option>
                 </select>
-                
                 <label for="e74_age">③ 만 나이:</label>
                 <input type="number" id="e74_age" placeholder="만 나이 입력 (필수)">
-
                 <label for="e74_career">④ 국내 경력 (E-9, E-10, H-2 자격, 개월):</label>
                 <input type="number" id="e74_career" placeholder="총 경력 기간 (개월)">
 
@@ -141,11 +173,10 @@
             </div>
             
             <div id="e74CloseButtonArea" style="display: none; padding-top: 10px;">
-                 <button type="button" class="close-modal-btn" onclick="closeModal('e74Modal')">
+                <button type="button" class="close-modal-btn" onclick="closeModal('e74Modal')">
                     결과 확인 완료 및 창 닫기
                 </button>
             </div>
-            
         </div>
     </div>
     
@@ -174,5 +205,30 @@
     <script src="script.js"></script> 
     <script src="e74.js"></script>
     <script src="h2.js"></script>
+    <script src="e71.js"></script> <script>
+        // 전역 모달 제어 함수 (script.js에 있을 것으로 가정하나, 예시를 위해 정의)
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // E-7-1 프로그램 로드 및 모달 열기 함수 (버튼의 onclick 이벤트 핸들러)
+        function openE71Program() {
+            const contentArea = document.getElementById('e71ProgramContent');
+            
+            // 1. E-7-1 프로그램 UI 로드 (e71.js에서 정의된 함수 호출)
+            if (typeof loadE71Program === 'function') {
+                loadE71Program(contentArea);
+            } else {
+                contentArea.innerHTML = "<p style='color:red;'>오류: e71.js 로직을 찾을 수 없습니다. 파일 연결 및 함수 정의를 확인하세요.</p>";
+            }
+            
+            // 2. 모달 열기
+            openModal('e71Modal');
+        }
+
+    </script>
 </body>
 </html>
