@@ -24,6 +24,10 @@
         #e71ProgramContent .input-group { margin-bottom: 10px; border: 1px solid #eee; padding: 10px; border-radius: 4px; }
         #e71ProgramContent button.diagnose { background-color: #3498db; color: white; border: none; padding: 10px; width: 48%; }
         #e71ProgramContent button.reset { background-color: #95a5a6; color: white; border: none; padding: 10px; width: 48%; }
+        
+        /* E-7-4 체크박스 스타일 개선 */
+        #e74Form .checkbox-group label { display: block; margin-bottom: 5px; font-weight: normal; }
+        #e74Form .checkbox-group input[type="checkbox"] { width: auto; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -40,7 +44,7 @@
                 🔍 **법규/지침 검색 & Q&A 바로가기**
             </button>
             <div class="alert-banner">
-                🔔 **최신 알림:** E-7-4 점수제 갱신 사항 확인!
+                🔔 **최신 알림:** E-7-4 점수제 갱신 사항 확인! (최소 200점)
             </div>
         </section>
 
@@ -121,45 +125,54 @@
     <div id="e74Modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
-            <h2>🎯 E-7-4 숙련기능인력 점수 진단</h2>
+            <h2>🎯 E-7-4 숙련기능인력 점수 진단 (개정안 반영)</h2>
             <form id="e74Form">
-                <h3>I. 필수 기본 항목 및 점수 (최대 200점)</h3>
-                <label for="e74_income">① 연간 소득 (세전, 원):</label>
-                <input type="number" id="e74_income" placeholder="GNI 이상 입력 (필수)"> 
-                <label for="e74_korean">② 한국어 능력 (KIIP/TOPIK):</label>
+                <h3>I. 필수 기본 항목 (최대 300점)</h3>
+                <label for="e74_income">① **최근 2년간 연간 평균 소득 (원):**</label>
+                <input type="number" id="e74_income" placeholder="최소 25,000,000원 이상 (필수)"> 
+                
+                <label for="e74_korean">② **한국어 능력 (TOPIK 등급 또는 KIIP 단계):**</label>
                 <select id="e74_korean">
-                    <option value="0">선택 안함/미해당</option>
-                    <option value="50">KIIP 5단계 이수 또는 TOPIK 5급 이상 (50점)</option>
-                    <option value="40">KIIP 4단계 이수 또는 TOPIK 4급 (40점)</option>
-                    <option value="30">KIIP 3단계 이수 또는 TOPIK 3급 (30점)</option>
-                    <option value="20">KIIP 2단계 이수 또는 TOPIK 2급 (20점)</option>
+                    <option value="0">선택 안함/미해당 (0점)</option>
+                    <option value="4">4급/4단계 이상 (120점)</option>
+                    <option value="3">3급/3단계 (80점)</option>
+                    <option value="2">2급/2단계 (50점) (최소 요건)</option>
                 </select>
-                <label for="e74_age">③ 만 나이:</label>
-                <input type="number" id="e74_age" placeholder="만 나이 입력 (필수)">
-                <label for="e74_career">④ 국내 경력 (E-9, E-10, H-2 자격, 개월):</label>
+                
+                <label for="e74_age">③ **나이 (만 나이):**</label>
+                <input type="number" id="e74_age" placeholder="현재 만 나이 입력 (필수)">
+                
+                <label for="e74_career">④ **국내 체류 경력 (E-9, E-10, H-2 자격, 개월):**</label>
                 <input type="number" id="e74_career" placeholder="총 경력 기간 (개월)">
 
-                <h3>II. 가점 항목 (최대 90점)</h3>
+                <h3>II. 가점 항목 (최대 110점)</h3>
                 <div class="checkbox-group">
-                    <p style="font-weight: bold; margin-bottom: 5px;">기술/숙련도 (최대 30점):</p>
-                    <label><input type="checkbox" id="e74_tech"> 숙련도(기술) 관련 자격증 보유 (10점)</label>
-                    <label><input type="checkbox" id="e74_degree"> 국내 전문학사 이상 학위 (10점)</label>
-                    <label><input type="checkbox" id="e74_kiipcomp"> KIIP 5단계 이수 후 3년 경과 (10점)</label>
+                    <p style="font-weight: bold; margin-bottom: 5px; color: #007bff;">추천 및 고용 기여도:</p>
+                    <label><input type="checkbox" id="e74_rec_central"> 중앙부처 추천 (+30점)</label>
+                    <label><input type="checkbox" id="e74_rec_local"> 광역 지방자치단체 추천 (+30점)</label>
+                    <label><input type="checkbox" id="e74_rec_corp"> 현재 고용 기업체 추천 (1년 이상 근무) (+50점)</label>
+                    <label><input type="checkbox" id="e74_long_service"> 현 근무처 3년 이상 근속 (+20점)</label>
+                    <label><input type="checkbox" id="e74_local_area_work"> 인구감소/읍면지역 3년 이상 근무 (+20점)</label>
                 </div>
                 
                 <div class="checkbox-group" style="margin-top: 15px;">
-                    <p style="font-weight: bold; margin-bottom: 5px;">고용 기업 기여도 (최대 40점):</p>
-                    <label><input type="checkbox" id="e74_asset"> 부동산 등 자산 보유 (5점)</label>
-                    <label><input type="checkbox" id="e74_local"> 지방 근무지 (10점)</label>
-                    <label><input type="checkbox" id="e74_service"> 대한민국 우수 서비스 인력 (5점)</label>
+                    <p style="font-weight: bold; margin-bottom: 5px; color: #007bff;">기술 및 기타 항목:</p>
+                    <label><input type="checkbox" id="e74_tech_degree"> 기술 자격증 또는 국내 학위 (+20점)</label>
+                    <label><input type="checkbox" id="e74_driving_license"> 국내 운전면허증 보유 (+10점)</label>
                 </div>
 
                 <h3>III. 감점 항목</h3>
-                <label for="e74_violation_count">출입국관리법 위반 횟수 (최근 3년):</label>
-                <input type="number" id="e74_violation_count" value="0" min="0">
+                <label for="e74_fine_count">**벌금형 (100만원 미만) 횟수 (최근 3년):**</label>
+                <input type="number" id="e74_fine_count" value="0" min="0" max="3" placeholder="0 ~ 3회">
+                
+                <label for="e74_tax_arrear_count">**조세 체납으로 체류허가 제한받은 횟수:**</label>
+                <input type="number" id="e74_tax_arrear_count" value="0" min="0" max="3" placeholder="0 ~ 3회">
+                
+                <label for="e74_violation_count">**출입국관리법 위반 횟수 (3회 이하):**</label>
+                <input type="number" id="e74_violation_count" value="0" min="0" max="3" placeholder="0 ~ 3회">
 
-                <button type="button" onclick="calculateE74()">🎯 최종 점수 계산 및 진단</button>
-                <button type="button" onclick="resetE74Form()" style="margin-top: 10px; background-color: #6c757d;">
+                <button type="button" onclick="calculateE74()" class="diagnose">🎯 최종 점수 계산 및 진단 (200점 기준)</button>
+                <button type="button" onclick="resetE74Form()" class="reset" style="margin-top: 10px;">
                     입력 내용 초기화
                 </button>
             </form>
