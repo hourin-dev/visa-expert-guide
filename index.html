@@ -107,7 +107,9 @@
     <script src="e74.js"></script>
     <script src="h2.js"></script>
     <script src="e71.js"></script> 
-    <script src="f5.js"></script> <script>
+    <script src="f5.js"></script> 
+
+<script>
         // 전역 모달 제어 함수
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
@@ -116,13 +118,15 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // E-7-1 프로그램 로드 함수
+        // E-7-1 프로그램 로드 및 모달 열기 함수
         function openE71Program() {
             const contentArea = document.getElementById('e71ProgramContent');
             if (typeof loadE71Program === 'function') {
                 loadE71Program(contentArea);
-                openModal('e71Modal');
+            } else {
+                contentArea.innerHTML = "<p style='color:red;'>오류: e71.js 로직을 찾을 수 없습니다.</p>";
             }
+            openModal('e71Modal');
         }
     </script>
 </body>
