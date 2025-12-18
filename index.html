@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 모달 기본 스타일 (style.css에 없다면 필요) */
+        /* 모달 기본 스타일 */
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             overflow: auto; background-color: rgba(0,0,0,0.4);
@@ -19,13 +19,18 @@
         .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
         .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
         
-        /* E-7-1 로직 스타일 (e71.js에도 일부 인라인 스타일이 포함됨) */
-        #e71ProgramContent input, #e71ProgramContent select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-        #e71ProgramContent .input-group { margin-bottom: 10px; border: 1px solid #eee; padding: 10px; border-radius: 4px; }
+        /* 공통 입력 그룹 스타일 (F-5 및 기타 모달용) */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .input-group input, .input-group select { 
+            width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; 
+        }
+
+        /* E-7-1 특정 스타일 유지 */
         #e71ProgramContent button.diagnose { background-color: #3498db; color: white; border: none; padding: 10px; width: 48%; }
         #e71ProgramContent button.reset { background-color: #95a5a6; color: white; border: none; padding: 10px; width: 48%; }
         
-        /* E-7-4 체크박스 스타일 개선 */
+        /* E-7-4 체크박스 스타일 */
         #e74Form .checkbox-group label { display: block; margin-bottom: 5px; font-weight: normal; }
         #e74Form .checkbox-group input[type="checkbox"] { width: auto; margin-right: 5px; }
     </style>
@@ -86,13 +91,6 @@
                 </div>
             </div>
             
-            <div class="visa-group a-series">
-                <h2>A계열 비자 (외교, 공무, 협정)</h2>
-                <div class="menu-grid">
-                    <button class="menu-item disabled" onclick="alert('A계열 비자는 통상 외교부/법무부 협의를 요합니다.')">A-1/A-2/A-3 정보 참조</button>
-                </div>
-            </div>
-            
             <div class="visa-group common-tools">
                 <h2>📌 공통 지원 기능</h2>
                 <div class="menu-grid">
@@ -100,20 +98,28 @@
                     <button class="menu-item highlight-alt" onclick="alert('변경/연장 절차 가이드 모듈 연결 예정')">📝 비자 변경/연장 절차 가이드</button>
                 </div>
             </div>
-
         </section>
     </main>
+
+    <div id="f5Modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close-btn" onclick="closeModal('f5Modal')">&times;</span>
+            <h2>🎯 F-5 영주권 신청 요건 자가진단</h2>
+            <div id="f5ProgramContent">로딩 중...</div>
+            <div style="padding-top: 10px;">
+                <button type="button" class="close-modal-btn" onclick="closeModal('f5Modal')" style="background-color: #5cb85c; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer;">
+                    확인 완료 및 창 닫기
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="e71Modal" class="modal">
         <div class="modal-content large-modal">
             <span class="close-btn" onclick="closeModal('e71Modal')">&times;</span>
             <h2>🛠️ E-7-1 특정활동 조건 체크 및 진단</h2>
-            
-            <div id="e71ProgramContent">
-                로딩 중...
-            </div>
-            
-            <div id="e71CloseButtonAreaInModal" style="padding-top: 10px;">
+            <div id="e71ProgramContent">로딩 중...</div>
+            <div style="padding-top: 10px;">
                 <button type="button" class="close-modal-btn" onclick="closeModal('e71Modal')" style="background-color: #5cb85c; color: white; border: none; padding: 10px;">
                     결과 확인 완료 및 창 닫기
                 </button>
@@ -121,145 +127,19 @@
         </div>
     </div>
 
-
     <div id="e74Modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
-            <h2>🎯 E-7-4 숙련기능인력 점수 진단 (개정안 반영)</h2>
+            <h2>🎯 E-7-4 숙련기능인력 점수 진단</h2>
             <form id="e74Form">
-                <h3>I. 필수 기본 항목 (최대 300점)</h3>
-                <label for="e74_income">① **최근 2년간 연간 평균 소득 (원):**</label>
-                <input type="number" id="e74_income" placeholder="최소 25,000,000원 이상 (필수)"> 
-                
-                <label for="e74_korean">② **한국어 능력 (TOPIK 등급 또는 KIIP 단계):**</label>
-                <select id="e74_korean">
-                    <option value="0">선택 안함/미해당 (0점)</option>
-                    <option value="4">4급/4단계 이상 (120점)</option>
-                    <option value="3">3급/3단계 (80점)</option>
-                    <option value="2">2급/2단계 (50점) (최소 요건)</option>
-                </select>
-                
-                <label for="e74_age">③ **나이 (만 나이):**</label>
-                <input type="number" id="e74_age" placeholder="현재 만 나이 입력 (필수)">
-                
-                <label for="e74_career">④ **국내 체류 경력 (E-9, E-10, H-2 자격, 개월):**</label>
-                <input type="number" id="e74_career" placeholder="총 경력 기간 (개월)">
-
-                <h3>II. 가점 항목 (최대 110점)</h3>
-                <div class="checkbox-group">
-                    <p style="font-weight: bold; margin-bottom: 5px; color: #007bff;">추천 및 고용 기여도:</p>
-                    <label><input type="checkbox" id="e74_rec_central"> 중앙부처 추천 (+30점)</label>
-                    <label><input type="checkbox" id="e74_rec_local"> 광역 지방자치단체 추천 (+30점)</label>
-                    <label><input type="checkbox" id="e74_rec_corp"> 현재 고용 기업체 추천 (1년 이상 근무) (+50점)</label>
-                    <label><input type="checkbox" id="e74_long_service"> 현 근무처 3년 이상 근속 (+20점)</label>
-                    <label><input type="checkbox" id="e74_local_area_work"> 인구감소/읍면지역 3년 이상 근무 (+20점)</label>
-                </div>
-                
-                <div class="checkbox-group" style="margin-top: 15px;">
-                    <p style="font-weight: bold; margin-bottom: 5px; color: #007bff;">기술 및 기타 항목:</p>
-                    <label><input type="checkbox" id="e74_tech_degree"> 기술 자격증 또는 국내 학위 (+20점)</label>
-                    <label><input type="checkbox" id="e74_driving_license"> 국내 운전면허증 보유 (+10점)</label>
-                </div>
-
-                <h3>III. 감점 항목</h3>
-                <label for="e74_fine_count">**벌금형 (100만원 미만) 횟수 (최근 3년):**</label>
-                <input type="number" id="e74_fine_count" value="0" min="0" max="3" placeholder="0 ~ 3회">
-                
-                <label for="e74_tax_arrear_count">**조세 체납으로 체류허가 제한받은 횟수:**</label>
-                <input type="number" id="e74_tax_arrear_count" value="0" min="0" max="3" placeholder="0 ~ 3회">
-                
-                <label for="e74_violation_count">**출입국관리법 위반 횟수 (3회 이하):**</label>
-                <input type="number" id="e74_violation_count" value="0" min="0" max="3" placeholder="0 ~ 3회">
-
-                <button type="button" onclick="calculateE74()" class="diagnose">🎯 최종 점수 계산 및 진단 (200점 기준)</button>
-                <button type="button" onclick="resetE74Form()" class="reset" style="margin-top: 10px;">
-                    입력 내용 초기화
-                </button>
+                <button type="button" onclick="calculateE74()" class="diagnose">🎯 최종 점수 계산</button>
             </form>
-            
-            <div id="e74ResultContainer">
-                <div id="e74Result" class="result-box"></div>
-                
-                <div id="e74ScoreTableArea" style="display: none;"></div>
-                
-                <div id="e74DocumentGuidance" class="document-guidance-box" style="display: none;"></div>
-            </div>
-            
-            <div id="e74CloseButtonArea" style="display: none; padding-top: 10px;">
-                <button type="button" class="close-modal-btn" onclick="closeModal('e74Modal')">
-                    결과 확인 완료 및 창 닫기
-                </button>
-            </div>
+            <div id="e74Result" class="result-box"></div>
         </div>
     </div>
-    
-    <div id="h2Modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('h2Modal')">&times;</span>
-            <h2>🛠️ H-2 취업 가능성 상세 진단 (테스트 화면)</h2>
-            <button type="button" onclick="calculateH2()">H-2 취업 가능 여부 확인</button>
-            <div id="h2Result" class="result-box"></div>
-        </div>
-    </div>
-
-    <div id="h1Modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('h1Modal')">&times;</span> 
-            <h2>📝 H-1 관광취업 요건 안내 (테스트 화면)</h2>
-            <div style="padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px;">
-                <p style="font-size: 1.1em; font-weight: bold; color: #007bff;">
-                    H-1 모달이 정상적으로 호출되었습니다.
-                </p>
-            </div>
-            <button onclick="closeModal('h1Modal')" style="margin-top: 20px; background-color: #5cb85c;">확인 후 닫기</button>
-        </div>
-    </div>
-  
-<div id="f5Modal" class="modal">
-    <div class="modal-content large-modal">
-        <span class="close-btn" onclick="closeModal('f5Modal')">&times;</span>
-        <h2>🎯 F-5 영주권 신청 요건 자가진단</h2>
-        
-        <div id="f5ProgramContent">
-            로딩 중...
-        </div>
-        
-        <div style="padding-top: 10px;">
-            <button type="button" class="close-modal-btn" onclick="closeModal('f5Modal')" style="background-color: #5cb85c; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer;">
-                확인 완료 및 창 닫기
-            </button>
-        </div>
-    </div>
-</div>    
-
 
     <script src="script.js"></script> 
     <script src="e74.js"></script>
     <script src="h2.js"></script>
-    <script src="e71.js"></script> <script>
-        // 전역 모달 제어 함수 (script.js에 있을 것으로 가정하나, 예시를 위해 정의)
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-        }
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // E-7-1 프로그램 로드 및 모달 열기 함수 (버튼의 onclick 이벤트 핸들러)
-        function openE71Program() {
-            const contentArea = document.getElementById('e71ProgramContent');
-            
-            // 1. E-7-1 프로그램 UI 로드 (e71.js에서 정의된 함수 호출)
-            if (typeof loadE71Program === 'function') {
-                loadE71Program(contentArea);
-            } else {
-                contentArea.innerHTML = "<p style='color:red;'>오류: e71.js 로직을 찾을 수 없습니다. 파일 연결 및 함수 정의를 확인하세요.</p>";
-            }
-            
-            // 2. 모달 열기
-            openModal('e71Modal');
-        }
-
-    </script>
-</body>
-</html>
+    <script src="e71.js"></script> 
+    <script src="f5.
