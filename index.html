@@ -52,7 +52,7 @@
             <div class="visa-group f-series">
                 <h2>F계열 비자 (가족, 거주, 영주, 동포)</h2>
                 <div class="menu-grid">
-                    <button class="menu-item important" onclick="alert('F-5 영주권 진단 모듈 연결 예정')">🎯 F-5 영주권 요건 진단</button>
+                    <button class="menu-item important" onclick="openF5Program()">🎯 F-5 영주권 요건 진단</button>
                     <button class="menu-item important" onclick="alert('F-2-7 우수 인재 점수 진단 모듈 연결 예정')">🎯 F-2-7 우수 인재 점수 진단</button>
                     <button class="menu-item" onclick="alert('F-4 재외동포 자격 확인 모듈 연결 예정')">🛠️ F-4 재외동포 자격 확인</button>
                     <button class="menu-item" onclick="alert('F-6 결혼이민 조건 안내 모듈 연결 예정')">📝 F-6 결혼이민 조건 가이드</button>
@@ -214,7 +214,25 @@
             <button onclick="closeModal('h1Modal')" style="margin-top: 20px; background-color: #5cb85c;">확인 후 닫기</button>
         </div>
     </div>
-    
+  
+<div id="f5Modal" class="modal">
+    <div class="modal-content large-modal">
+        <span class="close-btn" onclick="closeModal('f5Modal')">&times;</span>
+        <h2>🎯 F-5 영주권 신청 요건 자가진단</h2>
+        
+        <div id="f5ProgramContent">
+            로딩 중...
+        </div>
+        
+        <div style="padding-top: 10px;">
+            <button type="button" class="close-modal-btn" onclick="closeModal('f5Modal')" style="background-color: #5cb85c; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer;">
+                확인 완료 및 창 닫기
+            </button>
+        </div>
+    </div>
+</div>    
+
+
     <script src="script.js"></script> 
     <script src="e74.js"></script>
     <script src="h2.js"></script>
