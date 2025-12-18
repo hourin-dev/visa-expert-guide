@@ -1,4 +1,4 @@
-// F-5 영주권 진단 프로그램 로드
+// F-5 영주권 진단 프로그램 (매뉴얼 최신판 반영)
 function openF5Program() {
     const contentArea = document.getElementById('f5ProgramContent');
     loadF5UI(contentArea);
@@ -7,97 +7,106 @@ function openF5Program() {
 
 function loadF5UI(container) {
     container.innerHTML = `
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; line-height: 1.6;">
-            <strong>※ 안내:</strong> 가장 일반적인 <strong>F-5-1(일반 영주)</strong> 기준 진단입니다. 
-            영주권은 신청 시점의 최신 GNI(국민총소득) 발표치를 기준으로 합니다.
+        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; border-left: 5px solid #0d6efd;">
+            <strong>📘 매뉴얼 근거 진단:</strong> 신청 자격별로 상이한 체류 기간 및 소득 요건을 검토합니다. 
         </div>
 
         <div class="input-group">
-            <label><strong>1. 현재 체류 자격</strong></label>
-            <select id="f5_current_visa">
-                <option value="E-7">E-1 ~ E-7 (전문인력)</option>
-                <option value="F-2">F-2 (거주)</option>
-                <option value="D-8">D-8 (기업투자)</option>
-                <option value="OTHERS">기타 (D-2, E-9 등은 바로 신청 불가)</option>
+            <label>1. 신청 예정 영주권 유형</label>
+            <select id="f5_type">
+                <option value="F-5-1">일반 영주자 (F-5-1)</option>
+                <option value="F-5-2">영주권자의 배우자 (F-5-2)</option>
+                <option value="F-5-10">첨단분야 학사 학위자 (F-5-10)</option>
+                <option value="F-5-16">점수제 거주자 (F-5-16)</option>
             </select>
         </div>
 
         <div class="input-group">
-            <label><strong>2. 국내 체류 기간 (동일 자격 유지)</strong></label>
-            <select id="f5_stay_period">
-                <option value="0">2년 미만</option>
-                <option value="2">2년 이상</option>
-                <option value="5">5년 이상</option>
-            </select>
+            <label>2. 해당 자격 국내 체류 기간</label>
+            <input type="number" id="f5_years" placeholder="연 단위 입력 (예: 3)">
         </div>
 
         <div class="input-group">
-            <label><strong>3. 소득 요건 (전년도 연간 소득)</strong></label>
-            <input type="number" id="f5_income" placeholder="예: 45000000 (단위: 원)">
-            <p style="font-size: 0.8em; color: #666;">* 2024년 GNI 기준 약 4,400만 원 이상 권장</p>
+            <label>3. 전년도 연간 소득 (원)</label>
+            <input type="number" id="f5_income" placeholder="소득금액증명원 기준 금액">
         </div>
 
         <div class="input-group">
-            <label><strong>4. 한국어 능력</strong></label>
-            <select id="f5_korean">
-                <option value="none">없음</option>
-                <option value="kiip5">사회통합프로그램(KIIP) 5단계 이수</option>
-                <option value="topik6">TOPIK 6급</option>
+            <label>4. 기본 소양 (사회통합프로그램)</label>
+            <select id="f5_kiip_status">
+                <option value="none">해당 없음 / 이수 중</option>
+                <option value="passed">5단계 이수 및 영주용 종합평가 합격</option>
             </select>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button onclick="calculateF5()" style="flex: 1; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">진단하기</button>
-            <button onclick="openF5Program()" style="flex: 1; padding: 12px; background: #bdc3c7; color: white; border: none; border-radius: 4px; cursor: pointer;">초기화</button>
-        </div>
+        <button onclick="calculateF5()" style="width:100%; padding:15px; background:#0d6efd; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">
+            🔍 매뉴얼 기준 자가진단 실행
+        </button>
 
-        <div id="f5_result" style="margin-top: 20px; padding: 15px; border-radius: 4px; display: none;"></div>
+        <div id="f5_result_container" style="margin-top:20px; display:none;">
+            <div id="f5_status_box" style="padding:15px; border-radius:5px; font-weight:bold; margin-bottom:10px;"></div>
+            <div id="f5_manual_guide" style="background:#f8f9fa; padding:15px; border:1px solid #dee2e6; font-size:0.9em; line-height:1.6;"></div>
+        </div>
     `;
 }
 
 function calculateF5() {
-    const visa = document.getElementById('f5_current_visa').value;
-    const period = parseInt(document.getElementById('f5_stay_period').value);
+    const type = document.getElementById('f5_type').value;
+    const years = parseInt(document.getElementById('f5_years').value) || 0;
     const income = parseInt(document.getElementById('f5_income').value) || 0;
-    const korean = document.getElementById('f5_korean').value;
-    const resultDiv = document.getElementById('f5_result');
+    const kiip = document.getElementById('f5_kiip_status').value;
+    
+    const resultContainer = document.getElementById('f5_result_container');
+    const statusBox = document.getElementById('f5_status_box');
+    const guideBox = document.getElementById('f5_manual_guide');
+    
+    // GNI 1배 기준 (매뉴얼상 2024년 기준 약 4,400만원 가정) 
+    const GNI_1 = 44000000;
+    let isPass = true;
+    let failReasons = [];
+    let manualText = "";
 
-    let passCount = 0;
-    let feedback = [];
-
-    // 1. 체류 기간 체크 (일반영주는 보통 5년, F-2는 2년 등 특례 존재)
-    if (visa === 'F-2' && period >= 2) {
-        passCount++;
-    } else if (period >= 5) {
-        passCount++;
-    } else {
-        feedback.push("❌ 체류 기간 부족 (일반적으로 5년 이상 필요)");
+    // 자격별 로직 분기 
+    switch(type) {
+        case 'F-5-1':
+            manualText = "<strong>[F-5-1 일반 영주자 지침]</strong><br>• 체류: 5년 이상 지속 체류<br>• 소득: GNI 1배 이상<br>• 소양: KIIP 5단계 필수";
+            if (years < 5) { isPass = false; failReasons.push("국내 체류 기간 5년 미달"); }
+            if (income < GNI_1) { isPass = false; failReasons.push("연간 소득 GNI 1배 미달"); }
+            break;
+        case 'F-5-2':
+            manualText = "<strong>[F-5-2 영주권자 배우자 지침]</strong><br>• 체류: 결혼 유지 상태로 2년 이상<br>• 소득: GNI 1배 이상 (배우자 합산 가능)<br>• 소양: KIIP 5단계 필수";
+            if (years < 2) { isPass = false; failReasons.push("국내 체류 기간 2년 미달"); }
+            if (income < GNI_1) { isPass = false; failReasons.push("소득 요건 미달 (가족 합산 확인 필요)"); }
+            break;
+        case 'F-5-10':
+            manualText = "<strong>[F-5-10 첨단기술 학사 지침]</strong><br>• 체류: 학위 취득 후 3년 이상 체류<br>• 소득: GNI 1배 이상<br>• 소양: KIIP 5단계 필수";
+            if (years < 3) { isPass = false; failReasons.push("학위 취득 후 체류 기간 3년 미달"); }
+            if (income < GNI_1) { isPass = false; failReasons.push("연간 소득 GNI 1배 미달"); }
+            break;
+        case 'F-5-16':
+            manualText = "<strong>[F-5-16 점수제 영주권 지침]</strong><br>• 체류: F-2 자격으로 3년 이상 체류<br>• 소득: GNI 1배 이상 (일부 자격 2배)<br>• 소양: KIIP 5단계 필수";
+            if (years < 3) { isPass = false; failReasons.push("F-2 자격 체류 기간 3년 미달"); }
+            if (income < GNI_1) { isPass = false; failReasons.push("연간 소득 GNI 요건 미달"); }
+            break;
     }
 
-    // 2. 소득 체크 (GNI 1배 기준 약 4,400만 원 가정)
-    const GNI_THRESHOLD = 44000000; 
-    if (income >= GNI_THRESHOLD) {
-        passCount++;
-    } else {
-        feedback.push(`❌ 소득 부족 (GNI 1배 약 ${GNI_THRESHOLD.toLocaleString()}원 이상 필요)`);
+    // 공통 소양 체크 
+    if (kiip !== 'passed') {
+        isPass = false;
+        failReasons.push("사회통합프로그램(KIIP) 5단계 미이수");
     }
 
-    // 3. 한국어 체크
-    if (korean === 'kiip5') {
-        passCount++;
-    } else {
-        feedback.push("❌ KIIP 5단계 이수 필수 (영주용 종합평가 합격 필요)");
-    }
+    // 결과 표시
+    resultContainer.style.display = "block";
+    guideBox.innerHTML = manualText;
 
-    // 결과 출력
-    resultDiv.style.display = "block";
-    if (passCount === 3) {
-        resultDiv.style.background = "#d4edda";
-        resultDiv.style.color = "#155724";
-        resultDiv.innerHTML = "<h3>✅ 영주권 신청 가능성이 높습니다!</h3><p>필수 3대 요건(기간, 소득, 품행)을 충족하는 것으로 보입니다. 전문 행정사와 세부 서류를 준비하세요.</p>";
+    if (isPass) {
+        statusBox.style.backgroundColor = "#d1e7dd";
+        statusBox.style.color = "#0f5132";
+        statusBox.innerHTML = "✅ 영주권 신청 요건을 충족하는 것으로 판단됩니다.";
     } else {
-        resultDiv.style.background = "#f8d7da";
-        resultDiv.style.color = "#721c24";
-        resultDiv.innerHTML = "<h3>⚠️ 보완이 필요합니다.</h3>" + feedback.join("<br>");
+        statusBox.style.backgroundColor = "#f8d7da";
+        statusBox.style.color = "#842029";
+        statusBox.innerHTML = "❌ 요건 미충족: " + failReasons.join(", ");
     }
 }
