@@ -19,7 +19,7 @@
         .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
         .close-btn:hover, .close-btn:focus { color: black; text-decoration: none; cursor: pointer; }
         
-        /* 공통 입력 그룹 스타일 (f5.js에서 사용하는 클래스) */
+        /* 공통 입력 그룹 스타일 */
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .input-group input, .input-group select { 
@@ -84,6 +84,30 @@
                 </div>
             </div>
 
+            <div class="visa-group d-series">
+                <h2>D계열 비자 (유학, 연수, 투자)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item" onclick="alert('D-8 투자 요건 체크 모듈 연결 예정')">🛠️ D-8 기업투자 요건 체크</button>
+                    <button class="menu-item" onclick="alert('D-2 체류 조건 모듈 연결 예정')">📝 D-2 유학 체류 조건 안내</button>
+                    <button class="menu-item" onclick="alert('D-10 조건 안내 모듈 연결 예정')">📝 D-10 구직 비자 조건 안내</button>
+                </div>
+            </div>
+            
+            <div class="visa-group a-series">
+                <h2>A계열 비자 (외교, 공무, 협정)</h2>
+                <div class="menu-grid">
+                    <button class="menu-item disabled" onclick="alert('A계열 비자는 통상 외교부/법무부 협의를 요합니다.')">A-1/A-2/A-3 정보 참조</button>
+                </div>
+            </div>
+            
+            <div class="visa-group common-tools">
+                <h2>📌 공통 지원 기능</h2>
+                <div class="menu-grid">
+                    <button class="menu-item highlight-alt" onclick="alert('통합 서류 안내 모듈 연결 예정')">📝 체류 자격별 필수 서류 안내</button>
+                    <button class="menu-item highlight-alt" onclick="alert('변경/연장 절차 가이드 모듈 연결 예정')">📝 비자 변경/연장 절차 가이드</button>
+                </div>
+            </div>
+
         </section>
     </main>
 
@@ -100,17 +124,65 @@
         </div>
     </div>
 
-    <div id="e71Modal" class="modal"><div class="modal-content">... (기존내용)</div></div>
-    <div id="e74Modal" class="modal"><div class="modal-content">... (기존내용)</div></div>
+    <div id="e71Modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close-btn" onclick="closeModal('e71Modal')">&times;</span>
+            <h2>🛠️ E-7-1 특정활동 조건 체크 및 진단</h2>
+            <div id="e71ProgramContent">로딩 중...</div>
+            <div style="padding-top: 10px;">
+                <button type="button" class="close-modal-btn" onclick="closeModal('e71Modal')" style="background-color: #5cb85c; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px;">
+                    결과 확인 완료 및 창 닫기
+                </button>
+            </div>
+        </div>
+    </div>
 
+    <div id="e74Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('e74Modal')">&times;</span>
+            <h2>🎯 E-7-4 숙련기능인력 점수 진단 (개정안 반영)</h2>
+            <form id="e74Form">
+                <h3>I. 필수 기본 항목 (최대 300점)</h3>
+                <label for="e74_income">① **최근 2년간 연간 평균 소득 (원):**</label>
+                <input type="number" id="e74_income" placeholder="최소 25,000,000원 이상 (필수)"> 
+                
+                <label for="e74_korean">② **한국어 능력 (TOPIK 등급 또는 KIIP 단계):**</label>
+                <select id="e74_korean">
+                    <option value="0">선택 안함/미해당 (0점)</option>
+                    <option value="4">4급/4단계 이상 (120점)</option>
+                    <option value="3">3급/3단계 (80점)</option>
+                    <option value="2">2급/2단계 (50점) (최소 요건)</option>
+                </select>
+                
+                <label for="e74_age">③ **나이 (만 나이):**</label>
+                <input type="number" id="e74_age" placeholder="현재 만 나이 입력 (필수)">
+                
+                <label for="e74_career">④ **국내 체류 경력 (E-9, E-10, H-2 자격, 개월):**</label>
+                <input type="number" id="e74_career" placeholder="총 경력 기간 (개월)">
+
+                <h3>II. 가점 항목 (최대 110점)</h3>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="e74_rec_central"> 중앙부처 추천 (+30점)</label>
+                    <label><input type="checkbox" id="e74_rec_local"> 광역 지방자치단체 추천 (+30점)</label>
+                    <label><input type="checkbox" id="e74_rec_corp"> 현재 고용 기업체 추천 (1년 이상 근무) (+50점)</label>
+                    <label><input type="checkbox" id="e74_long_service"> 현 근무처 3년 이상 근속 (+20점)</label>
+                    <label><input type="checkbox" id="e74_local_area_work"> 인구감소/읍면지역 3년 이상 근무 (+20점)</label>
+                </div>
+
+                <button type="button" onclick="calculateE74()" class="diagnose" style="background-color: #3498db; color: white; border: none; padding: 10px; width: 48%;">🎯 점수 계산</button>
+                <button type="button" onclick="resetE74Form()" class="reset" style="background-color: #95a5a6; color: white; border: none; padding: 10px; width: 48%;">초기화</button>
+            </form>
+            <div id="e74Result" class="result-box"></div>
+        </div>
+    </div>
+    
     <script src="script.js"></script> 
     <script src="e74.js"></script>
     <script src="h2.js"></script>
     <script src="e71.js"></script> 
     <script src="f5.js"></script> 
 
-<script>
-        // 전역 모달 제어 함수
+    <script>
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
         }
@@ -118,7 +190,16 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // E-7-1 프로그램 로드 및 모달 열기 함수
+        function openF5Program() {
+            const contentArea = document.getElementById('f5ProgramContent');
+            if (typeof loadF5Program === 'function') {
+                loadF5Program(contentArea);
+            } else {
+                contentArea.innerHTML = "<p style='color:red;'>오류: f5.js 로직을 찾을 수 없습니다.</p>";
+            }
+            openModal('f5Modal');
+        }
+
         function openE71Program() {
             const contentArea = document.getElementById('e71ProgramContent');
             if (typeof loadE71Program === 'function') {
