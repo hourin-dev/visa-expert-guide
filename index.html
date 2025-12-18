@@ -190,15 +190,17 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        function openF5Program() {
-            const contentArea = document.getElementById('f5ProgramContent');
-            if (typeof loadF5Program === 'function') {
-                loadF5Program(contentArea);
-            } else {
-                contentArea.innerHTML = "<p style='color:red;'>오류: f5.js 로직을 찾을 수 없습니다.</p>";
-            }
-            openModal('f5Modal');
-        }
+// index.html 하단 스크립트 수정
+function openF5Program() {
+    const contentArea = document.getElementById('f5ProgramContent');
+    // f5.js에 정의된 실제 함수 이름인 loadF5UI로 변경
+    if (typeof loadF5UI === 'function') { 
+        loadF5UI(contentArea);
+    } else {
+        contentArea.innerHTML = "<p style='color:red;'>오류: f5.js 파일이 로드되지 않았습니다.</p>";
+    }
+    openModal('f5Modal');
+}
 
         function openE71Program() {
             const contentArea = document.getElementById('e71ProgramContent');
